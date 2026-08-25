@@ -9,8 +9,8 @@ data-preflight: data-guard
 	docker stats --no-stream
 
 data-guard:
-	@foreign=$$(docker compose ls --format '{{.Name}}' 2>/dev/null | awk '$$0 != "" && $$0 != "data"'); \
-	if [ -n "$$foreign" ]; then echo "refusing: active compose project(s) other than 'data':" $$foreign >&2; exit 1; fi
+	@foreign=$$(docker compose ls --format '{{.Name}}' 2>/dev/null | awk '$$0 != "" && $$0 != "data" && $$0 != "cdc"'); \
+	if [ -n "$$foreign" ]; then echo "refusing: active compose project(s) other than 'data'+'cdc':" $$foreign >&2; exit 1; fi
 
 data-up: data-guard
 	$(COMPOSE) config -q
@@ -27,3 +27,29 @@ data-stats:
 
 data-down:
 	$(COMPOSE) down
+
+COMPOSE_CDC := docker compose --env-file .env -f platform/infra/compose.cdc.yaml
+
+.PHONY: cdc-guard cdc-up cdc-register cdc-schema cdc-health cdc-down
+
+cdc-guard: data-guard
+	@status=$$($(COMPOSE_CDC) ps -q connect 2>/dev/null | xargs -r docker inspect -f '{{.State.Health.Status}}' 2>/dev/null); \
+	[ "$$status" = "healthy" ] || { echo "cdc-connect not healthy (status: $${status:-absent})" >&2; exit 1; }
+
+cdc-health:
+	@bash -c '. "$(CURDIR)/.env" 2>/dev/null; curl -s "http://localhost:$${CONNECT_HOST_PORT:-8083}/connectors" | head -c 300; echo'
+
+cdc-up: data-guard
+	$(COMPOSE) up -d postgres kafka
+	$(COMPOSE_CDC) up -d
+	@ok=""; for i in $$(seq 1 24); do if $(MAKE) -s cdc-guard 2>/dev/null; then ok=1; break; fi; sleep 5; done; \
+	[ -n "$$ok" ] || { echo "cdc-connect failed to become healthy" >&2; exit 1; }
+
+cdc-register: cdc-guard cdc-schema
+	bash platform/infra/cdc/register-postgres.sh
+
+cdc-schema:
+	docker exec -i data-postgres sh -c 'psql -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"' < platform/infra/cdc/schema.sql
+
+cdc-down:
+	$(COMPOSE_CDC) down

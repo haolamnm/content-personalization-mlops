@@ -27,7 +27,7 @@ Local infrastructure runs as **disjoint compose profile groups**, sized so one g
 
 | Group | Members (typical) | Planning estimate |
 |:---|:---|:---|
-| core-data | PostgreSQL, MongoDB, Debezium, Kafka (KRaft), MinIO | ~3–4 GB |
+| data | PostgreSQL, MongoDB, Kafka (KRaft), MinIO | ~2.5–3.5 GB |
 | streaming | Flink jobmanager/taskmanager (+ Kafka if not already up) | ~2–3 GB |
 | ml | Ray head/worker, MLflow, Feast | ~2–3 GB while training |
 | serving | Redis, Elasticsearch, Rust/Go/Python services | ~1.5–2 GB |

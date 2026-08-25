@@ -11,7 +11,7 @@ The machine cannot host the full stack ([ADR 0003](../../../docs/adr/0003-ram-bu
 
 | Group | Members | Planning est. |
 |:---|:---|:---|
-| core-data | PostgreSQL, MongoDB, Debezium, Kafka (KRaft), MinIO | ~3–4 GB |
+| data | PostgreSQL, MongoDB, Kafka (KRaft), MinIO | ~2.5–3.5 GB |
 | streaming | Flink jobmanager/taskmanager (+ Kafka if down) | ~2–3 GB |
 | ml | Ray head/worker, MLflow, Feast | ~2–3 GB training |
 | serving | Redis, Elasticsearch, Rust/Go/Python services | ~1.5–2 GB |

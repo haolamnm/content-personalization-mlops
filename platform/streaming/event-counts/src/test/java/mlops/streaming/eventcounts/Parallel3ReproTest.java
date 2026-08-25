@@ -8,6 +8,8 @@ import java.time.Instant;
 import java.util.List;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.CoreOptions;
+import org.apache.flink.api.connector.sink2.SinkWriter;
+import org.apache.flink.api.connector.sink2.WriterInitContext;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,7 @@ import org.junit.jupiter.api.Test;
 class Parallel3ReproTest {
 
     private static final List<String> COLLECTED = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private static final List<RawEvent> LATE = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     private static Instant at(int second) {
         return Instant.ofEpochSecond(1_800_100_000L + second);
@@ -53,8 +56,8 @@ class Parallel3ReproTest {
 
         var lateTag = EventCountsJob.lateTag();
         var counts = EventCountsJob.countByType(events, lateTag);
-        counts.sinkTo(new EventCountsPipelineTest.CollectingSink());
-        counts.getSideOutput(lateTag).sinkTo(new EventCountsPipelineTest.LateSink());
+        counts.sinkTo(new LocalSink());
+        counts.getSideOutput(lateTag).sinkTo(new LocalLateSink());
 
         env.execute();
 
@@ -66,5 +69,28 @@ class Parallel3ReproTest {
         assertEquals(3, COLLECTED.stream().filter(l -> l.startsWith("click")).count(), COLLECTED.toString());
         assertEquals(1, COLLECTED.stream().filter(l -> l.startsWith("share")).count());
         assertEquals(1, COLLECTED.stream().filter(l -> l.startsWith("impression")).count());
+    }
+
+    // self-owned collectors: results must land here, not on shared pipeline-test lists
+    private static final class LocalSink implements org.apache.flink.api.connector.sink2.Sink<String> {
+        @Override
+        public org.apache.flink.api.connector.sink2.SinkWriter<String> createWriter(WriterInitContext ctx) {
+            return new org.apache.flink.api.connector.sink2.SinkWriter<>() {
+                @Override public void write(String element, Context context) { COLLECTED.add(element); }
+                @Override public void flush(boolean endOfInput) {}
+                @Override public void close() {}
+            };
+        }
+    }
+
+    private static final class LocalLateSink implements org.apache.flink.api.connector.sink2.Sink<RawEvent> {
+        @Override
+        public org.apache.flink.api.connector.sink2.SinkWriter<RawEvent> createWriter(WriterInitContext ctx) {
+            return new org.apache.flink.api.connector.sink2.SinkWriter<>() {
+                @Override public void write(RawEvent element, Context context) { LATE.add(element); }
+                @Override public void flush(boolean endOfInput) {}
+                @Override public void close() {}
+            };
+        }
     }
 }

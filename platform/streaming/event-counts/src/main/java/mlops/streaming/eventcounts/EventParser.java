@@ -24,6 +24,9 @@ public final class EventParser {
         }
         try {
             var env = MAPPER.readValue(json, Wire.class);
+            if (env == null) {
+                return Optional.empty(); // JSON literal "null" maps to a null reference
+            }
             // created_at may be absent/null: pass it through and let isValid() reject —
             // Instant.parse would NPE on null, escaping the catch set and crashing the job
             var event = new RawEvent(

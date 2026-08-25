@@ -62,6 +62,11 @@ class EventParserTest {
     }
 
     @Test
+    void rejectsJsonLiteralNull() {
+        assertTrue(EventParser.parse("null").isEmpty());
+    }
+
+    @Test
     void rejectsBadTimestamp() {
         assertTrue(EventParser.parse("""
                 {"user_id":"u1","item_id":"i7","event_type":"click","created_at":"yesterday"}

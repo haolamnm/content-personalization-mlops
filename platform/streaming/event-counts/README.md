@@ -16,6 +16,8 @@ Consumes `mlops.events.raw`, counts events per `event_type` in **10s event-time 
 
 Watermarks: bounded-out-of-orderness **2 s** over gateway-stamped `created_at`; allowed lateness **5 s** beyond window end before an event is side-output as too late.
 
+Output caveat: `DataStream.print()` stdout delivery is **at-least-once** — recovery replays can repeat console lines even though operator state checkpoints EXACTLY_ONCE. Real sinks bind to the idempotent-write rule instead.
+
 State profile: only window state exists (per `event_type` key — cardinality ≤ 5), cleaned automatically when windows purge; no unbounded keyed state, so no TTL is declared yet.
 
 ## Build & run
@@ -26,14 +28,19 @@ mvn -q package          # target/event-counts.jar — shaded fat jar
 mvn -q test             # MiniCluster tests, deterministic, no brokers needed
 
 # embedded run (LocalStreamEnvironment) against the mesh from inside the data network:
-docker run --rm --network mlops-data \
+# image pinned at adoption: eclipse-temurin:25-jre, digest sha256:f9e65324a37f2 verified
+docker run -d --name flink-event-counts --network mlops-data \
   -e KAFKA_BOOTSTRAP_SERVERS=kafka:9092 \
   -v "$PWD/target/event-counts.jar:/app/event-counts.jar" \
-  eclipse-temurin:25-jre java   # digest sha256:f9e65324a37f2 verified at adoption --add-opens=java.base/java.lang=ALL-UNNAMED \
+  --health-cmd "find /tmp/flink-checkpoints -mmin -2 | grep -q chk" \
+  --health-interval=15s --health-timeout=5s --health-start-period=45s \
+  eclipse-temurin:25-jre java --add-opens=java.base/java.lang=ALL-UNNAMED \
     --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED \
     --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED \
     --add-opens=java.base/sun.nio.ch=ALL-UNNAMED -jar /app/event-counts.jar
 ```
+
+Health = checkpoint freshness: the job checkpoints every 10 s, so a stale checkpoint tree means the pipeline is wedged even though the JVM lives (no HTTP endpoint exists in embedded mode; REST arrives with real deployment).
 
 JDK 25 needs those `--add-opens` flags at runtime (Pekko/Netty internals); tests get the same set via surefire argLine.
 

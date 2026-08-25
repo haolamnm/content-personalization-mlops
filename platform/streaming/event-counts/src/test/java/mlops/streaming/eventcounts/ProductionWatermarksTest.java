@@ -45,7 +45,10 @@ class ProductionWatermarksTest {
                 envelope("u2", "click", -3),
                 // within bound: counted in the first bucket despite arriving second
                 envelope("u3", "click", 8),
-                envelope("u9", "share", 20)));
+                envelope("u9", "share", 20),
+                // arrives last with wm already at ~18s: window [-40..-30) cleanup (=-25.001s)
+                // is far behind → production strategy itself must side-output it
+                envelope("u4", "click", -30)));
 
         var events = EventCountsJob.parse(wire).assignTimestampsAndWatermarks(EventCountsJob.boundedPunctuatedWatermarks());
         var lateTag = EventCountsJob.lateTag();
@@ -61,7 +64,8 @@ class ProductionWatermarksTest {
         }
         // u2 (3s behind) is NOT dropped: it belongs to its own earlier bucket and is still
         // within allowed lateness — the bound shapes watermark progress, not acceptance
-        assertTrue(LATE.isEmpty(), LATE.toString());
+        assertEquals(1, LATE.size(), "beyond-bound+lateness event must be side-output by the production strategy: " + LATE);
+        assertEquals("u4", LATE.getFirst().userId());
         var clicks = COLLECTED.stream().filter(l -> l.startsWith("click")).toList();
         assertEquals(2, clicks.size(), COLLECTED.toString());
         assertTrue(clicks.stream().anyMatch(l -> l.contains("count=1") && l.contains("[1800199990s")), "early bucket holds only u2: " + clicks);

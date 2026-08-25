@@ -26,7 +26,7 @@ and must never be committed.
 | [`*/CONTEXT.md`](./CONTEXT-MAP.md) | Per-module deep dives, living beside each module's code under `platform/` once it exists (Tribal convention). | Module-level detail |
 | [`.worklog/FOCUS.md`](./.worklog/FOCUS.md) | Current phase, active threads, handoff notes (gitignored). | Session state — read at start |
 | [`docs/adr/`](./docs/adr/) | Architecture decision records with alternatives. | Binding unless superseded by a newer ADR |
-| [`docs/agents/decision-log.md`](./docs/agents/decision-log.md) | Append-only decision log; machine-readable doc catalog in generated `docs/**/index.json`. | Background knowledge & decisions |
+| [`docs/agents/knowledge/`](./docs/agents/knowledge/) | Transferable knowledge notes (stack pins, bus contracts, streaming constraints); architectural decisions graduate into [`docs/adr/`](./docs/adr/) | Background knowledge & decisions |
 | [`README.md`](./README.md) | Public-facing overview. | Presentation, not instructions |
 
 ### Rules Mapping (`.agents/rules/`)

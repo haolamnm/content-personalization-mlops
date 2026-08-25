@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": "scripts/gen_docs_metadata.py",
-  "count": 8,
+  "count": 17,
   "docs": [
     {
       "path": "docs/README.md",
@@ -128,19 +128,180 @@
       ]
     },
     {
-      "path": "docs/agents/decision-log.md",
-      "id": "agents-decision-log",
-      "title": "Decision Log",
-      "type": "decision-log",
+      "path": "docs/agents/README.md",
+      "id": "agents-docs-map",
+      "title": "Agents Docs Map",
+      "type": "guide",
       "status": "active",
       "date": "2026-08-25",
       "tags": [
-        "mlops",
-        "decisions"
+        "docs",
+        "layout"
       ],
       "related": [
-        "../README.md",
-        "./index.json"
+        "../README.md"
+      ]
+    },
+    {
+      "path": "docs/agents/experiments/README.md",
+      "id": "agents-experiments-map",
+      "title": "Experiments",
+      "type": "guide",
+      "status": "active",
+      "date": "2026-08-25",
+      "tags": [
+        "experiments"
+      ],
+      "related": [
+        "../README.md"
+      ]
+    },
+    {
+      "path": "docs/agents/knowledge/cdc-debezium.md",
+      "id": "agents-knowledge-cdc-debezium",
+      "title": "CDC with Debezium",
+      "type": "knowledge",
+      "status": "active",
+      "date": "2026-08-25",
+      "tags": [
+        "cdc",
+        "debezium",
+        "postgres",
+        "mongo"
+      ],
+      "related": [
+        "../knowledge/image-pins.md",
+        "../../../platform/infra/compose.cdc.yaml"
+      ]
+    },
+    {
+      "path": "docs/agents/knowledge/compose-groups-and-ram.md",
+      "id": "agents-knowledge-compose-groups",
+      "title": "Compose Groups & RAM Discipline",
+      "type": "knowledge",
+      "status": "active",
+      "date": "2026-08-25",
+      "tags": [
+        "compose",
+        "docker",
+        "ram",
+        "healthchecks"
+      ],
+      "related": [
+        "../../adr/0003-ram-budgeted-local-infrastructure.md",
+        "../../adr/0006-thinkbook-remote-deployment-target.md",
+        "../../../.agents/rules/resource-budget.md"
+      ]
+    },
+    {
+      "path": "docs/agents/knowledge/flink-streaming.md",
+      "id": "agents-knowledge-flink-streaming",
+      "title": "Flink Streaming",
+      "type": "knowledge",
+      "status": "active",
+      "date": "2026-08-25",
+      "tags": [
+        "flink",
+        "streaming",
+        "watermarks",
+        "checkpoints"
+      ],
+      "related": [
+        "../knowledge/image-pins.md",
+        "../../../platform/streaming/event-counts/README.md",
+        "../../../.agents/rules/java-streaming-correctness.md"
+      ]
+    },
+    {
+      "path": "docs/agents/knowledge/image-pins.md",
+      "id": "agents-knowledge-image-pins",
+      "title": "Image Pins & Why",
+      "type": "knowledge",
+      "status": "active",
+      "date": "2026-08-25",
+      "tags": [
+        "images",
+        "pins",
+        "docker",
+        "flink",
+        "kafka"
+      ],
+      "related": [
+        "../knowledge/compose-groups-and-ram.md",
+        "../../adr/0003-ram-budgeted-local-infrastructure.md"
+      ]
+    },
+    {
+      "path": "docs/agents/knowledge/kafka-bus.md",
+      "id": "agents-knowledge-kafka-bus",
+      "title": "Kafka Bus",
+      "type": "knowledge",
+      "status": "active",
+      "date": "2026-08-25",
+      "tags": [
+        "kafka",
+        "listeners",
+        "topics",
+        "envelopes"
+      ],
+      "related": [
+        "../knowledge/image-pins.md",
+        "../../../platform/services/event-gateway/CONTEXT.md"
+      ]
+    },
+    {
+      "path": "docs/agents/knowledge/stack-and-toolchains.md",
+      "id": "agents-knowledge-stack-toolchains",
+      "title": "Stack & Toolchains",
+      "type": "knowledge",
+      "status": "active",
+      "date": "2026-08-25",
+      "tags": [
+        "toolchain",
+        "java",
+        "go",
+        "python",
+        "rust",
+        "typescript"
+      ],
+      "related": [
+        "../../adr/0004-polyglot-language-per-concern.md",
+        "../../adr/0005-sveltekit-over-nextjs.md",
+        "../../../.agents/rules/python-envs-and-quality.md"
+      ]
+    },
+    {
+      "path": "docs/agents/runbooks/deploy-thinkbook.md",
+      "id": "agents-runbook-deploy-thinkbook",
+      "title": "Runbook: Deploy to THINKBOOK",
+      "type": "runbook",
+      "status": "active",
+      "date": "2026-08-25",
+      "tags": [
+        "thinkbook",
+        "deploy",
+        "ssh"
+      ],
+      "related": [
+        "../../adr/0006-thinkbook-remote-deployment-target.md",
+        "../../../.computers/THINKBOOK.md"
+      ]
+    },
+    {
+      "path": "docs/agents/runbooks/new-service-slice.md",
+      "id": "agents-runbook-new-service-slice",
+      "title": "Runbook: New Service Slice",
+      "type": "runbook",
+      "status": "active",
+      "date": "2026-08-25",
+      "tags": [
+        "workflow",
+        "slices",
+        "review"
+      ],
+      "related": [
+        "./deploy-thinkbook.md",
+        "../../../AGENTS.md"
       ]
     }
   ]

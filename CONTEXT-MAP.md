@@ -87,5 +87,5 @@ Facts, not aspirations.
 | `.agents/rules/` | mapped in AGENTS.md §1 | Operational rules with frontmatter (`globs`, `alwaysApply`). |
 | `.agents/skills/` | mapped in AGENTS.md §1 | Phase workflows: study, operate. |
 | `docs/adr/` | [`docs/README.md`](./docs/README.md) hub | Binding decisions with alternatives. |
-| `docs/agents/` | `decision-log.md` + generated `index.json` | Research notes + append-only decision log. |
+| `docs/agents/` | `knowledge/` + `runbooks/` + `experiments/` + section map + generated `index.json` | Agent-facing docs: transferable knowledge, executable procedures, experiment records. |
 | `.notes/00-roadmap.md` | roadmap | Phase plan and stack map (local-only). |

@@ -1,14 +1,18 @@
 COMPOSE_FILE := platform/infra/compose.data.yaml
 COMPOSE := docker compose --env-file .env -f $(COMPOSE_FILE)
 
-.PHONY: data-preflight data-up data-health data-stats data-down
+.PHONY: data-preflight data-guard data-up data-health data-stats data-down
 
-data-preflight:
+data-preflight: data-guard
 	docker ps
 	memory_pressure | head -20
 	docker stats --no-stream
 
-data-up:
+data-guard:
+	@foreign=$$(docker compose ls --format '{{.Name}}' 2>/dev/null | awk '$$0 != "" && $$0 != "data"'); \
+	if [ -n "$$foreign" ]; then echo "refusing: active compose project(s) other than 'data':" $$foreign >&2; exit 1; fi
+
+data-up: data-guard
 	$(COMPOSE) config -q
 	$(COMPOSE) up -d
 

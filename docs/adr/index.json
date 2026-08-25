@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": "scripts/gen_docs_metadata.py",
-  "count": 6,
+  "count": 7,
   "docs": [
     {
       "path": "docs/adr/0001-content-personalization-theme.md",
@@ -110,6 +110,26 @@
       ],
       "related": [
         "0003-ram-budgeted-local-infrastructure.md"
+      ]
+    },
+    {
+      "path": "docs/adr/0007-kubernetes-adoption-k3s-helm.md",
+      "id": "adr-0007",
+      "title": "ADR 0007 — Kubernetes Adoption: k3s on THINKBOOK, Helm-First",
+      "type": "adr",
+      "status": "accepted",
+      "date": "2026-08-26",
+      "tags": [
+        "infrastructure",
+        "kubernetes",
+        "k3s",
+        "helm",
+        "thinkbook"
+      ],
+      "related": [
+        "0003-ram-budgeted-local-infrastructure.md",
+        "0006-thinkbook-remote-deployment-target.md",
+        "../../.agents/rules/resource-budget.md"
       ]
     }
   ]

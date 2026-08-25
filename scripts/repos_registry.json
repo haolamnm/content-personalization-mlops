@@ -1,0 +1,8 @@
+{
+  "purchase-prediction-mlops": {
+    "added": "2026-08-24",
+    "why": "Closest open blueprint of our target stack - Debezium CDC -> Kafka -> data lake/DWH -> Feast online store -> Ray -> MLflow registry -> serving -> Superset/Grafana/SigNoz observability -> NGINX, each wired via its own docker-compose file; Phase 0 study subject.",
+    "study_notes": ".notes/topics/reference-purchase-prediction.md",
+    "pinned": false
+  }
+}

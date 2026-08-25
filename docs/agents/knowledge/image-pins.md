@@ -1,0 +1,37 @@
+---
+title: "Image Pins & Why"
+id: agents-knowledge-image-pins
+date: 2026-08-25
+type: knowledge
+status: active
+tags: [images, pins, docker, flink, kafka]
+related:
+  - ../knowledge/compose-groups-and-ram.md
+  - ../../adr/0003-ram-budgeted-local-infrastructure.md
+---
+
+# Image Pins & Why
+
+Pins are registry-verified at adoption, never from memory. Compose files carry the versions; this doc carries the *reasons* so bumps are informed.
+
+## Data group
+
+| Image | Pin | Why pinned here |
+|:---|:---|:---|
+| `postgres` | 18.6 | current stable at adoption; volume must mount `/var/lib/postgresql` — postgres:18 moved PGDATA to `/var/lib/postgresql/18/docker`, legacy-path mounts break or silently fail to persist |
+| `mongo` | 8.0.29 | Debezium certifies Mongo 6.0/7.0/8.0 only (3.7 connector still alpha) — 8.3.8 "current stable" would block CDC |
+| `apache/kafka` | 4.3.1 | KRaft-only line; see [kafka-bus](./kafka-bus.md) for listener scheme |
+| `minio/minio` | `RELEASE.2025-09-07T16-13-09Z` | community edition archived upstream (repo read-only since 2026-04-25, final security release never published as a tag); last pullable tag; revisit only if a phase demands newer MinIO |
+
+## Streaming
+
+| Artifact | Pin | Why |
+|:---|:---|:---|
+| Flink | 2.2.1 | newest minor with a matching Kafka connector build (see below) |
+| `flink-connector-kafka` | 5.0.0-2.2 | connector releases track specific Flink minors; no `-2.3` existed at adoption — matched pair, no drift (review-blocking per java rules) |
+| Kafka clients | 4.2.x (transitive) | compatible with broker 4.3.1 |
+| Runtime image | `eclipse-temurin:25-jre`, digest `sha256:f9e65324a37f2…` verified | JDK 25 LTS per ADR 0004 |
+
+## CDC
+
+`quay.io/debezium/connect:3.6.1.Final` — newest stable; Docker Hub mirror stale at 3.0, so quay is the source of truth for this artifact.

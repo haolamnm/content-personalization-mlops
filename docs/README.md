@@ -25,7 +25,7 @@ Binding decisions with alternatives; newest supersedes oldest explicitly. Catalo
 
 ## Research & Decision Log (`docs/agents/`)
 
-Append-only decision log: [`agents/decision-log.md`](./agents/decision-log.md). Entry catalog (research notes use `NNNN-slug.md`, landing as Phase 0 study output): [`agents/index.json`](./agents/index.json) (generated).
+Agent docs: [`agents/README.md`](./agents/README.md) (knowledge / runbooks / experiments map). Catalog (research notes use `NNNN-slug.md`, landing as Phase 0 study output): [`agents/index.json`](./agents/index.json) (generated).
 
 ## Agent Layer
 

@@ -1,0 +1,12 @@
+[project]
+name = "mlops-workspace"
+version = "0.1.0"
+description = "Content personalization MLOps workspace — python tooling for scripts and the ML plane"
+requires-python = ">=3.12"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15",
+    "ty>=0.0.1",
+    "basedpyright>=1.39",
+]

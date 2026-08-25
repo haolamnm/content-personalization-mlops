@@ -3,13 +3,18 @@ name: data
 services:
   postgres:
     image: postgres:18.6
+    restart: unless-stopped
     container_name: data-postgres
+    networks:
+      - mlops-data
+    # wal_level=logical required by Debezium (cdc slice); restart-safe, volume persists
+    command: ["postgres", "-c", "wal_level=logical"]
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5432}:5432"
     volumes:
       # postgres:18+ stores PGDATA under /var/lib/postgresql/<major>/docker; upstream recommends mounting the parent
       - postgres-data:/var/lib/postgresql
@@ -22,12 +27,17 @@ services:
 
   mongodb:
     image: mongo:8.0.29
+    restart: unless-stopped
     container_name: data-mongodb
+    networks:
+      - mlops-data
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      # kernel >=6.19 breaks mongod startup (SERVER-121912); glibc tunable is the documented workaround
+      GLIBC_TUNABLES: glibc.pthread.rseq=1
     ports:
-      - "127.0.0.1:27017:27017"
+      - "127.0.0.1:${MONGO_HOST_PORT:-27017}:27017"
     volumes:
       - mongo-data:/data/db
     healthcheck:
@@ -39,13 +49,18 @@ services:
 
   kafka:
     image: apache/kafka:4.3.1
+    restart: unless-stopped
     container_name: data-kafka
+    networks:
+      - mlops-data
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:29093,PLAINTEXT_HOST://:29092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:29092
+      # host listener must live on a DISTINCT internal port: in-network clients reaching
+      # kafka:29092 must land on the in-network listener, not the host-advertised one
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:29093,PLAINTEXT_HOST://:29094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29094
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
@@ -56,7 +71,7 @@ services:
       KAFKA_LOG_DIRS: /var/lib/kafka/data
       CLUSTER_ID: ${KAFKA_CLUSTER_ID:?KAFKA_CLUSTER_ID missing - copy .env.example to .env}
     ports:
-      - "127.0.0.1:29092:29092"
+      - "127.0.0.1:29094:29094"
     volumes:
       - kafka-data:/var/lib/kafka/data
     healthcheck:
@@ -69,14 +84,17 @@ services:
   minio:
     # Community MinIO was archived upstream 2026-04-25; this is the last pullable image tag.
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    restart: unless-stopped
     container_name: data-minio
+    networks:
+      - mlops-data
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     ports:
-      - "127.0.0.1:9000:9000"
-      - "127.0.0.1:9001:9001"
+      - "127.0.0.1:${MINIO_API_HOST_PORT:-9000}:9000"
+      - "127.0.0.1:${MINIO_CONSOLE_HOST_PORT:-9001}:9001"
     volumes:
       - minio-data:/data
     healthcheck:
@@ -91,3 +109,7 @@ volumes:
   mongo-data:
   kafka-data:
   minio-data:
+
+networks:
+  mlops-data:
+    name: mlops-data

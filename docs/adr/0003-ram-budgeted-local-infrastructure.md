@@ -19,7 +19,7 @@ Accepted (2026-08-25). Constraint is physical, not negotiable.
 
 ## Context
 
-The target stack names ~20 services; several are JVM-heavy (Kafka brokers, Debezium Connect, Flink TaskManager, SigNoz's ClickHouse, Superset), realistically 0.5–2 GB RSS each. The dev machine is RAM-constrained (exact specs: root `COMPUTER.md`, developer-local) and runs containers through OrbStack's Linux VM. Starting everything simultaneously guarantees swap-thrash or a dead machine — this is arithmetic, not pessimism.
+The target stack names ~20 services; several are JVM-heavy (Kafka brokers, Debezium Connect, Flink TaskManager, SigNoz's ClickHouse, Superset), realistically 0.5–2 GB RSS each. The dev machine is RAM-constrained (exact specs: `.computers/MACBOOK.md`, developer-local) and runs containers through OrbStack's Linux VM. Starting everything simultaneously guarantees swap-thrash or a dead machine — this is arithmetic, not pessimism.
 
 ## Decision
 
@@ -48,4 +48,4 @@ Rules: exactly ONE group at a time; previous group goes `down` before the next s
 
 - No cross-group live integration testing; end-to-end runs must be staged group-by-group or done in a later cloud pass.
 - Estimates above are planning numbers until measured — `managing-mlops-services` records actuals (Principle 5).
-- OrbStack allocates VM memory dynamically; an explicit cap is preferred before heavy groups (value recorded in `COMPUTER.md` §3 once set).
+- OrbStack allocates VM memory dynamically; an explicit cap is preferred before heavy groups (value recorded in `.computers/MACBOOK.md` §3 once set).

@@ -15,7 +15,7 @@ Python owns the ML plane ([ADR 0004](../../docs/adr/0004-polyglot-language-per-c
 
 ## Universal Constraints
 
-- **Python 3.14 via uv only** — never the system interpreter (`COMPUTER.md` §4 records why).
+- **Python 3.14 via uv only** — never the system interpreter (`.computers/MACBOOK.md` §4 records why).
 - **Explicit over clever** at service boundaries: plain functions and dataclasses/pydantic models; no metaclass magic, no import-time side effects.
 - **Async only where I/O-bound**: FastAPI/Ray Serve handlers may be async; CPU-bound data work stays sync inside Ray tasks.
 - `ruff check` + touched-file type checks pass before delivery ([`verify-before-done`](./verify-before-done.md)).

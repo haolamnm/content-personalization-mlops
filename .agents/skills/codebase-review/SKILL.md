@@ -24,7 +24,7 @@ In order: active goal in `.worklog/FOCUS.md` → decision-log rows / ADRs → ro
 
 ### 3. Identify the standards sources
 
-- `AGENTS.md` (+ `AGENTS.local.md`, `COMPUTER.md` facts), `CONTEXT-MAP.md`
+- `AGENTS.md` (+ `AGENTS.local.md`, `.computers/MACBOOK.md` facts), `CONTEXT-MAP.md`
 - `.agents/rules/*.md` — general rules plus the touched language's set (`java-*`, `go-*`, `rust-*`, `python-*`), especially `minimal-footprint.md`, `resource-budget.md`
 - The owning bounded context in CONTEXT-MAP §1 for seam boundaries
 

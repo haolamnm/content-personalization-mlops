@@ -17,5 +17,5 @@ Go owns the edge: the event gateway, the app-facing BFF, and simulators/load gen
 
 - **Stdlib first**: `net/http`, `encoding/json`, `log/slog` cover nearly everything; a dependency needs a reason written next to it in `go.mod`.
 - **Errors are values**: wrap with `%w` and add context at each boundary; `errors.Is/As` for inspection; panics only for programmer errors.
-- **Go 1.27** from `COMPUTER.md`; toolchain pinned via `go` directive in `go.mod`.
-- `go vet` + `gofmt -l` clean before delivery (`verify-before-done` gate); module data lives under XDG paths per `COMPUTER.md` §4 — never `~/go`.
+- **Go 1.27** from `.computers/MACBOOK.md`; toolchain pinned via `go` directive in `go.mod`.
+- `go vet` + `gofmt -l` clean before delivery (`verify-before-done` gate); module data lives under XDG paths per `.computers/MACBOOK.md` §4 — never `~/go`.

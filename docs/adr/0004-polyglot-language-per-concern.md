@@ -19,7 +19,7 @@ Accepted (2026-08-25). Changes require a superseding ADR, not per-task improvisa
 
 ## Context
 
-The workspace optimizes for two things at once: an **optimal** production-grade pipeline (right tool per job, measured performance and memory) and **maximum learning** (each language owns a distinct runtime paradigm). The machine constraint ([ADR 0003](./0003-ram-budgeted-local-infrastructure.md); live facts in `COMPUTER.md`) makes runtime footprint a first-class selection criterion. Kafka-centric architecture also implies living in the JVM ecosystem where that ecosystem is strongest.
+The workspace optimizes for two things at once: an **optimal** production-grade pipeline (right tool per job, measured performance and memory) and **maximum learning** (each language owns a distinct runtime paradigm). The machine constraint ([ADR 0003](./0003-ram-budgeted-local-infrastructure.md); live facts in `.computers/MACBOOK.md`) makes runtime footprint a first-class selection criterion. Kafka-centric architecture also implies living in the JVM ecosystem where that ecosystem is strongest.
 
 ## Decision
 

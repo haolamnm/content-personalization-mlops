@@ -25,11 +25,11 @@ The machine cannot host the full stack ([ADR 0003](../../../docs/adr/0003-ram-bu
 1. **Preflight (mandatory)**: `docker ps` (must be empty or only the target group), `memory_pressure | head -20`, `docker stats --no-stream`. If another group is up → stop it first (`docker compose ... down`). Ask before running anything beyond obs-light if free memory looks tight.
 2. **Start one group**: `docker compose -f platform/infra/<group>.yaml up -d` (compose files arrive in Phase 1). Validate first: `docker compose -f <file> config -q`.
 3. **Health-check every member** before declaring success — each service gets an explicit check (HTTP endpoint, `kafka-topics --list`, `mc ready`, etc.). No "container is running" hand-waving.
-4. **Capture actuals**: `docker stats --no-stream` RSS per container → append one line to `COMPUTER.md` §5 (`date · group · container · RSS`). Estimates graduate here or die ([Principle 5](../../../AGENTS.md)).
+4. **Capture actuals**: `docker stats --no-stream` RSS per container → append one line to `.computers/MACBOOK.md` §5 (`date · group · container · RSS`). Estimates graduate here or die ([Principle 5](../../../AGENTS.md)).
 5. **Teardown**: `down` when the session's work with the group ends; `-v` only when the group's data is disposable — never blindly.
 
 ## Hard rules
 
 - Never two groups at once, even "just briefly".
-- OrbStack memory is dynamic ([`COMPUTER.md`](../../../COMPUTER.md) §3) — set an explicit cap before obs-heavy/analytics rather than trusting reclaim mid-run.
+- OrbStack memory is dynamic ([`.computers/MACBOOK.md`](../../../.computers/MACBOOK.md) §3) — set an explicit cap before obs-heavy/analytics rather than trusting reclaim mid-run.
 - If a group OOMs or thrashes: stop, record what happened in §5, and re-plan sizes in ADR 0003 — don't just retry.

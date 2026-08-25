@@ -2,7 +2,7 @@
 .account
 .envrc
 AGENTS.local.md
-COMPUTER.md
+.computers/
 
 # local learning + reference clones + session state (never published)
 .notes/

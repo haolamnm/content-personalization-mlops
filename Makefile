@@ -9,8 +9,8 @@ data-preflight: data-guard
 	docker stats --no-stream
 
 data-guard:
-	@foreign=$$(docker compose ls --format '{{.Name}}' 2>/dev/null | awk '$$0 != "" && $$0 != "data" && $$0 != "cdc"'); \
-	if [ -n "$$foreign" ]; then echo "refusing: active compose project(s) other than 'data'+'cdc':" $$foreign >&2; exit 1; fi
+	@foreign=$$(docker compose ls --format '{{.Name}}' 2>/dev/null | awk '$$0 != "" && $$0 != "data" && $$0 != "cdc" && $$0 != "gateway"'); \
+	if [ -n "$$foreign" ]; then echo "refusing: active compose project(s) outside the sanctioned set:" $$foreign >&2; exit 1; fi
 
 data-up: data-guard
 	$(COMPOSE) config -q
@@ -53,3 +53,20 @@ cdc-schema:
 
 cdc-down:
 	$(COMPOSE_CDC) down
+
+COMPOSE_GATEWAY := docker compose --env-file .env -f platform/infra/compose.gateway.yaml
+
+.PHONY: gateway-up gateway-health gateway-down topics-ensure
+
+gateway-up: data-guard topics-ensure
+	$(COMPOSE_GATEWAY) up -d --build
+	@bash -c '. "$(CURDIR)/.env" 2>/dev/null; for i in $$(seq 1 20); do curl -sf "http://localhost:$${GATEWAY_HOST_PORT:-8080}/healthz" >/dev/null 2>&1 && echo GATEWAY-HEALTHY && exit 0; sleep 3; done; echo "gateway failed to become healthy" >&2; exit 1'
+
+topics-ensure:
+	docker exec data-kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --if-not-exists --topic mlops.events.raw --partitions 3 --replication-factor 1
+
+gateway-health:
+	@bash -c '. "$(CURDIR)/.env" 2>/dev/null; curl -fSs "http://localhost:$${GATEWAY_HOST_PORT:-8080}/healthz" && echo'
+
+gateway-down:
+	$(COMPOSE_GATEWAY) down

@@ -35,9 +35,17 @@ Pin rationale: MongoDB is 8.0.x, not the newer 8.3-series, because Debezium 3.7 
 
 Joins the data group's named network (`mlops-data`, external) so `postgres`/`kafka` hostnames resolve; bring-up order enforced by `make cdc-up` (starts postgres+kafka first, waits for connect health). Pin is 3.6.x, not the in-development 3.7 alphas, because 3.6.1.Final already ships Kafka 4.3 + PostgreSQL 18 support.
 
+### gateway — `compose.gateway.yaml` · status: **live on THINKBOOK**
+
+| Service | Image | Host port | Health check |
+|:---|:---|:---|:---|
+| event-gateway | `mlops/event-gateway:latest` (built from `platform/services/event-gateway`) | 8080 | `GET /healthz` |
+
+First owned service (Go): `POST /events` validates and produces to topic `mlops.events.raw` keyed by `user_id`. `make topics-ensure` creates the topic explicitly — Kafka 4.x auto-create is disabled.
+
 ## Boundaries
 
-- Debezium Connect lives in the *cdc* slice (`compose.cdc.yaml`) and is sanctioned to coexist with the data group — both projects are whitelisted in the Makefile guard; any third project is still refused. The one-group-at-a-time rule applies on MACBOOK; THINKBOOK permits the documented data+cdc coexistence under its larger budget.
+- The sanctioned compose set is **data + cdc + gateway**; all three are whitelisted in the Makefile guard and any further project is refused. The one-group-at-a-time rule applies on MACBOOK; THINKBOOK permits the documented trio coexistence under its larger budget.
 - Credentials come from root `.env` (copy `.env.example`); no secrets in compose files.
 - Host ports bind `127.0.0.1` only — LAN-inaccessible by default; relax per-service if a remote client ever needs direct reach.
 - Runtime boxes: groups are authored and first-measured on MACBOOK (RAM-capped, one group at a time); THINKBOOK is the standing deployment target over Tailscale (`ssh thinkbook`) for full-stack sessions — per-box facts in [`.computers/`](../../.computers/).

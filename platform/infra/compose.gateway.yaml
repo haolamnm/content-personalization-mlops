@@ -1,0 +1,24 @@
+name: gateway
+
+# Event gateway slice — joins the data group's network to reach Kafka.
+# Prereq: data group up (make data-up).
+
+services:
+  event-gateway:
+    build:
+      context: ../services/event-gateway
+    image: mlops/event-gateway:latest
+    container_name: gateway-event-gateway
+    restart: unless-stopped
+    environment:
+      GATEWAY_ADDR: ":8080"
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      GATEWAY_TOPIC: mlops.events.raw
+    ports:
+      - "127.0.0.1:${GATEWAY_HOST_PORT:-8080}:8080"
+    networks:
+      - mlops-data
+
+networks:
+  mlops-data:
+    external: true

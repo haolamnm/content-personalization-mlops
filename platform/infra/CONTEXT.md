@@ -25,7 +25,7 @@ Compose-managed infrastructure groups ([ADR 0003](../../docs/adr/0003-ram-budget
 | Kafka (KRaft) | `apache/kafka:4.3.1` | 29094 (host) · 9092 (mesh) | broker-api-versions |
 | MinIO | `minio/minio:RELEASE.2025-09-07T16-13-09Z` | 9000 / 9001 | `mc ready local` |
 
-Pin rationale: MongoDB is 8.0.x, not the newer 8.3-series, because Debezium 3.7 certifies Mongo 6.0/7.0/8.0 only — CDC wiring lands in the next branch. MinIO's community repo was archived upstream (2026-04-25); this tag is the last pullable community image.
+Pin rationale: MongoDB is 8.0.x, not the newer 8.3-series, because Debezium 3.7 certifies Mongo 6.0/7.0/8.0 only — and the live PostgreSQL CDC slice on THINKBOOK (cdc group below) depends on that certification. MinIO's community repo was archived upstream (2026-04-25); this tag is the last pullable community image.
 
 ### cdc — `compose.cdc.yaml` · status: **live on THINKBOOK**
 
@@ -37,7 +37,7 @@ Joins the data group's named network (`mlops-data`, external) so `postgres`/`kaf
 
 ## Boundaries
 
-- Debezium Connect lives in the *cdc* slice (`compose.cdc.yaml`) and is sanctioned to coexist with the data group — both projects are whitelisted in the Makefile guard; any third project is still refused.
+- Debezium Connect lives in the *cdc* slice (`compose.cdc.yaml`) and is sanctioned to coexist with the data group — both projects are whitelisted in the Makefile guard; any third project is still refused. The one-group-at-a-time rule applies on MACBOOK; THINKBOOK permits the documented data+cdc coexistence under its larger budget.
 - Credentials come from root `.env` (copy `.env.example`); no secrets in compose files.
 - Host ports bind `127.0.0.1` only — LAN-inaccessible by default; relax per-service if a remote client ever needs direct reach.
 - Runtime boxes: groups are authored and first-measured on MACBOOK (RAM-capped, one group at a time); THINKBOOK is the standing deployment target over Tailscale (`ssh thinkbook`) for full-stack sessions — per-box facts in [`.computers/`](../../.computers/).

@@ -25,7 +25,7 @@ data-health:
 data-stats:
 	docker stats --no-stream
 
-data-down:
+data-down: cdc-down
 	$(COMPOSE) down
 
 COMPOSE_CDC := docker compose --env-file .env -f platform/infra/compose.cdc.yaml
@@ -37,7 +37,7 @@ cdc-guard: data-guard
 	[ "$$status" = "healthy" ] || { echo "cdc-connect not healthy (status: $${status:-absent})" >&2; exit 1; }
 
 cdc-health:
-	@bash -c '. "$(CURDIR)/.env" 2>/dev/null; curl -s "http://localhost:$${CONNECT_HOST_PORT:-8083}/connectors" | head -c 300; echo'
+	@bash -c '. "$(CURDIR)/.env" 2>/dev/null; out=$$(curl -fSs "http://localhost:$${CONNECT_HOST_PORT:-8083}/connectors") || exit 1; printf "%.300s\n" "$$out"'
 
 cdc-up: data-guard
 	$(COMPOSE) up -d postgres kafka

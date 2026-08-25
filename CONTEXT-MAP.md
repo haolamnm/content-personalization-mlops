@@ -72,11 +72,11 @@ graph LR
 
 Facts, not aspirations.
 
-**Implemented**: workspace scaffolding only — context-engineering layer (AGENTS/CONTEXT-MAP/rules/skills/docs), reference clone registered with generated metadata, metadata generator. No runtime code exists anywhere yet.
+**Implemented**: workspace scaffolding only — context-engineering layer (AGENTS/CONTEXT-MAP/rules/skills/docs), reference clone registered with generated metadata, metadata generator. First runtime artifact: `data` compose group defined under [`platform/infra/`](./platform/infra/CONTEXT.md) (pinned images + health checks; config-validated, not yet run).
 
 **Reserved with binding decisions**: full pipeline shape above; language ownership per [ADR 0004](./docs/adr/0004-polyglot-language-per-concern.md); SvelteKit over Next.js per [ADR 0005](./docs/adr/0005-sveltekit-over-nextjs.md); RAM-profiled local infra per [ADR 0003](./docs/adr/0003-ram-budgeted-local-infrastructure.md).
 
-**Not built**: everything else — no compose files, no services, no notebooks, no dashboards. Phase 0 (reference study) is in progress; current state in [`.worklog/FOCUS.md`](./.worklog/FOCUS.md) (local-only).
+**Not built**: everything else — no services, no notebooks, no dashboards; the data group has never been started. Phase 0 (reference study) is in progress; current state in [`.worklog/FOCUS.md`](./.worklog/FOCUS.md) (local-only).
 
 ## 5. Engineering Contexts
 

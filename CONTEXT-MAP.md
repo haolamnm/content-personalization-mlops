@@ -36,7 +36,7 @@ graph LR
 
 | Bounded Context | Scope & Responsibility | Language | Home | Status |
 |:---|:---|:---|:---|:---|
-| **Event Gateway** | Ingest impressions/clicks/dwells at the edge; validate against schema; produce to Kafka; back-pressure + rate limits | Go | `platform/services/event-gateway` | reserved |
+| **Event Gateway** | Ingest impressions/clicks/dwells at the edge; validate against schema; produce to Kafka; back-pressure + rate limits | Go | `platform/services/event-gateway` | live on THINKBOOK |
 | **CDC** | Postgres change-data-capture into Kafka topics | Debezium (config) | `platform/infra/cdc` | reserved |
 | **Stream Processing** | Validate, enrich, aggregate event streams; write to lakehouse; one Kafka Streams service for lightweight enrichment | Java (Flink job + one KStreams svc) | `platform/streaming` | reserved |
 | **Lakehouse** | MinIO objects + Iceberg tables: bronze/silver/gold events | SQL + engine-managed | `platform/lakehouse` | reserved |

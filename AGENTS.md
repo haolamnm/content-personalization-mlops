@@ -19,7 +19,7 @@ and must never be committed.
 | Document | Scope & Purpose | Precedence |
 |:---|:---|:---|
 | [`AGENTS.local.md`](./AGENTS.local.md) | Machine-local constraints and preferences (gitignored). | Highest (developer machine overrides) |
-| [`.computers/MACBOOK.md`](./.computers/MACBOOK.md) | This machine's facts: hardware, OS, virtualization, toolchains, measured artifacts (gitignored). Referenced everywhere instead of hardcoded specs. | Facts source (read alongside local overrides) |
+| [`.computers/*.md`](./.computers/) | Machine facts per box — `MACBOOK.md` (authoring), `THINKBOOK.md` (deploy target), `WORKSTATION.md` (CloudThinker VM, out of scope). Durable facts as values, moving facts as commands (gitignored). Referenced everywhere instead of hardcoded specs. | Facts source (read alongside local overrides) |
 | [`.agents/rules/*.md`](./.agents/rules/) | Strict operational rules for this codebase. | Mandatory rules (mapped below) |
 | [`AGENTS.md`](./AGENTS.md) | Core agent philosophy, stack, behavior (this file). | Project-wide foundation |
 | [`CONTEXT-MAP.md`](./CONTEXT-MAP.md) | Pipeline bounded contexts, language ownership, vocabulary. Root hub — the only context file at root. | Domain vocabulary & constraints |
@@ -144,7 +144,7 @@ Before declaring any task complete:
 |:---|:---|:---|
 | `AGENTS.md`, `CONTEXT-MAP.md`, `README.md` | Root context layer (hub stays single at root) | tracked |
 | `AGENTS.local.md` | Machine rules (this Mac) — facts live in `.computers/MACBOOK.md` | ignored |
-| `.computers/MACBOOK.md` | Machine facts: hardware, OS, virtualization, toolchains, measured artifacts (this Mac) | ignored |
+| `.computers/` | Per-box machine facts: MACBOOK (authoring), THINKBOOK (deploy target), WORKSTATION (out of scope) | ignored |
 | `.agents/rules/`, `.agents/skills/` | Operational rules + phase skills | tracked |
 | `docs/adr/`, `docs/agents/`, `docs/README.md` | Decision records + research log | tracked |
 | `platform/**/CONTEXT.md` | Per-module context docs, beside their code (created with modules) | tracked once created |

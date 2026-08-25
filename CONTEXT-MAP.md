@@ -72,7 +72,7 @@ graph LR
 
 Facts, not aspirations.
 
-**Implemented**: workspace scaffolding only — context-engineering layer (AGENTS/CONTEXT-MAP/rules/skills/docs), reference clone registered with generated metadata, metadata generator. First runtime artifact: `data` compose group defined under [`platform/infra/`](./platform/infra/CONTEXT.md) (pinned images + health checks; config-validated, not yet run).
+**Implemented**: workspace scaffolding only — context-engineering layer (AGENTS/CONTEXT-MAP/rules/skills/docs), reference clone registered with generated metadata, metadata generator. First runtime artifact: `data` compose group defined under [`platform/infra/`](./platform/infra/CONTEXT.md) (pinned images + health checks; config-validated, not yet run). Remote runtime secured: THINKBOOK (Fedora, Docker+Compose) reachable via hardened SSH over Tailscale — deploy-target ADR pending.
 
 **Reserved with binding decisions**: full pipeline shape above; language ownership per [ADR 0004](./docs/adr/0004-polyglot-language-per-concern.md); SvelteKit over Next.js per [ADR 0005](./docs/adr/0005-sveltekit-over-nextjs.md); RAM-profiled local infra per [ADR 0003](./docs/adr/0003-ram-budgeted-local-infrastructure.md).
 

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": "scripts/gen_docs_metadata.py",
-  "count": 7,
+  "count": 8,
   "docs": [
     {
       "path": "docs/README.md",
@@ -108,6 +108,24 @@
       ],
       "related": [
         "./0004-polyglot-language-per-concern.md"
+      ]
+    },
+    {
+      "path": "docs/adr/0006-thinkbook-remote-deployment-target.md",
+      "id": "adr-0006",
+      "title": "ADR 0006 — THINKBOOK as Standing Remote Deployment Target",
+      "type": "adr",
+      "status": "accepted",
+      "date": "2026-08-25",
+      "tags": [
+        "infrastructure",
+        "deployment",
+        "tailscale",
+        "thinkbook"
+      ],
+      "related": [
+        "0003-ram-budgeted-local-infrastructure.md",
+        "../../.computers/THINKBOOK.md"
       ]
     },
     {

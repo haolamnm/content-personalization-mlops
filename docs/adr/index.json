@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "generator": "scripts/gen_docs_metadata.py",
+  "count": 5,
+  "docs": [
+    {
+      "path": "docs/adr/0001-content-personalization-theme.md",
+      "id": "adr-0001",
+      "title": "ADR 0001 — Content Personalization as the Carrying Theme",
+      "type": "adr",
+      "status": "accepted",
+      "date": "2026-08-24",
+      "tags": [
+        "mlops",
+        "theme",
+        "positioning"
+      ],
+      "related": [
+        "../agents/decision-log.md",
+        "./0004-polyglot-language-per-concern.md"
+      ]
+    },
+    {
+      "path": "docs/adr/0002-local-learning-and-reference-layout.md",
+      "id": "adr-0002",
+      "title": "ADR 0002 — Local-Only Learning Layer (.notes/, .repos/)",
+      "type": "adr",
+      "status": "accepted",
+      "date": "2026-08-24",
+      "tags": [
+        "layout",
+        "git",
+        "learning"
+      ],
+      "related": [
+        "./0001-content-personalization-theme.md"
+      ]
+    },
+    {
+      "path": "docs/adr/0003-ram-budgeted-local-infrastructure.md",
+      "id": "adr-0003",
+      "title": "ADR 0003 — RAM-Budgeted Local Infrastructure",
+      "type": "adr",
+      "status": "accepted",
+      "date": "2026-08-25",
+      "tags": [
+        "infrastructure",
+        "docker-compose",
+        "resource-budget",
+        "macos"
+      ],
+      "related": [
+        "../../AGENTS.local.md",
+        "../../.agents/rules/resource-budget.md",
+        "../../.agents/skills/managing-mlops-services/SKILL.md"
+      ]
+    },
+    {
+      "path": "docs/adr/0004-polyglot-language-per-concern.md",
+      "id": "adr-0004",
+      "title": "ADR 0004 — Polyglot by Concern: Language Ownership Map",
+      "type": "adr",
+      "status": "accepted",
+      "date": "2026-08-25",
+      "tags": [
+        "polyglot",
+        "java",
+        "python",
+        "go",
+        "rust",
+        "typescript",
+        "streaming",
+        "contracts"
+      ],
+      "related": [
+        "./0001-content-personalization-theme.md",
+        "./0003-ram-budgeted-local-infrastructure.md",
+        "./0005-sveltekit-over-nextjs.md"
+      ]
+    },
+    {
+      "path": "docs/adr/0005-sveltekit-over-nextjs.md",
+      "id": "adr-0005",
+      "title": "ADR 0005 — SvelteKit over Next.js for the App",
+      "type": "adr",
+      "status": "accepted",
+      "date": "2026-08-25",
+      "tags": [
+        "frontend",
+        "sveltekit",
+        "svelte5",
+        "nextjs"
+      ],
+      "related": [
+        "./0004-polyglot-language-per-concern.md"
+      ]
+    }
+  ]
+}

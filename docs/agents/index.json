@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "generator": "scripts/gen_docs_metadata.py",
+  "count": 1,
+  "docs": [
+    {
+      "path": "docs/agents/decision-log.md",
+      "id": "agents-decision-log",
+      "title": "Decision Log",
+      "type": "decision-log",
+      "status": "active",
+      "date": "2026-08-25",
+      "tags": [
+        "mlops",
+        "decisions"
+      ],
+      "related": [
+        "../README.md",
+        "./index.json"
+      ]
+    }
+  ]
+}

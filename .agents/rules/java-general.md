@@ -18,5 +18,5 @@ Java owns stream processing ([ADR 0004](../../docs/adr/0004-polyglot-language-pe
 - **Records for data, sealed interfaces for closed hierarchies**: event models are immutable records; no JavaBean setters on domain types.
 - **JVM memory is budgeted** ([`resource-budget`](./resource-budget.md)): heap sizes set explicitly per service in compose, never defaults; a JVM that grows past its allocation is a defect.
 - **No Lombok/magic**: explicit code over annotation-generated code — this codebase teaches, so it stays readable.
-- JDK 25 LTS from `COMPUTER.md`; Maven 3.9.x; both pinned per-module in `pom.xml` where relevant.
+- JDK 25 LTS from `.computers/MACBOOK.md`; Maven 3.9.x; both pinned per-module in `pom.xml` where relevant.
 - `mvn -q package` green + tests passing before delivery (`verify-before-done` gate).

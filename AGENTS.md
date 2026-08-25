@@ -19,7 +19,7 @@ and must never be committed.
 | Document | Scope & Purpose | Precedence |
 |:---|:---|:---|
 | [`AGENTS.local.md`](./AGENTS.local.md) | Machine-local constraints and preferences (gitignored). | Highest (developer machine overrides) |
-| [`COMPUTER.md`](./COMPUTER.md) | This machine's facts: hardware, OS, virtualization, toolchains, measured artifacts (gitignored). Referenced everywhere instead of hardcoded specs. | Facts source (read alongside local overrides) |
+| [`.computers/*.md`](./.computers/) | Machine facts per box — `MACBOOK.md` (authoring), `THINKBOOK.md` (deploy target), `WORKSTATION.md` (CloudThinker VM, out of scope). Durable facts as values, moving facts as commands (gitignored). Referenced everywhere instead of hardcoded specs. | Facts source (read alongside local overrides) |
 | [`.agents/rules/*.md`](./.agents/rules/) | Strict operational rules for this codebase. | Mandatory rules (mapped below) |
 | [`AGENTS.md`](./AGENTS.md) | Core agent philosophy, stack, behavior (this file). | Project-wide foundation |
 | [`CONTEXT-MAP.md`](./CONTEXT-MAP.md) | Pipeline bounded contexts, language ownership, vocabulary. Root hub — the only context file at root. | Domain vocabulary & constraints |
@@ -35,7 +35,7 @@ and must never be committed.
 - [`keep-docs-alive.md`](./.agents/rules/keep-docs-alive.md): docs evolve atomically with work — indexes, decision log, roadmap stay in lockstep.
 - [`verify-before-done.md`](./.agents/rules/verify-before-done.md): claims come from execution — compile checks, `docker compose config`, generated artifacts regenerated.
 - [`minimal-footprint.md`](./.agents/rules/minimal-footprint.md): touch only what the task requires; every changed line traces to the requirement.
-- [`resource-budget.md`](./.agents/rules/resource-budget.md): RAM-constrained machine (`COMPUTER.md`) — never run the whole stack; one profile group at a time, measured.
+- [`resource-budget.md`](./.agents/rules/resource-budget.md): RAM-constrained machine (`.computers/MACBOOK.md`) — never run the whole stack; one profile group at a time, measured.
 - [`reference-clones-read-only.md`](./.agents/rules/reference-clones-read-only.md): `.repos/` clones are untouched upstream checkouts; learning goes to `.notes/`.
 - [`generated-artifacts.md`](./.agents/rules/generated-artifacts.md): never hand-edit generated files (`metadata.json`, `docs/**/index.json`) — fix the generator or registry, then regenerate.
 
@@ -143,8 +143,8 @@ Before declaring any task complete:
 | Path | Purpose | Git |
 |:---|:---|:---|
 | `AGENTS.md`, `CONTEXT-MAP.md`, `README.md` | Root context layer (hub stays single at root) | tracked |
-| `AGENTS.local.md` | Machine rules (this Mac) — facts live in `COMPUTER.md` | ignored |
-| `COMPUTER.md` | Machine facts: hardware, OS, virtualization, toolchains, measured artifacts (this Mac) | ignored |
+| `AGENTS.local.md` | Machine rules (this Mac) — facts live in `.computers/MACBOOK.md` | ignored |
+| `.computers/` | Per-box machine facts: MACBOOK (authoring), THINKBOOK (deploy target), WORKSTATION (out of scope) | ignored |
 | `.agents/rules/`, `.agents/skills/` | Operational rules + phase skills | tracked |
 | `docs/adr/`, `docs/agents/`, `docs/README.md` | Decision records + research log | tracked |
 | `platform/**/CONTEXT.md` | Per-module context docs, beside their code (created with modules) | tracked once created |

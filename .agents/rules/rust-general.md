@@ -17,6 +17,6 @@ Rust owns the retrieval/ranking hot path ([ADR 0004](../../docs/adr/0004-polyglo
 ## Universal Constraints
 
 - The hot path is the reason Rust exists here — never accept an allocation, clone, or lock in the request loop without a measurement justifying it.
-- Latency and memory claims come from `criterion` benches / recorded profiles into `COMPUTER.md` §5, never intuition ([Principle 5](../../AGENTS.md)).
+- Latency and memory claims come from `criterion` benches / recorded profiles into `.computers/MACBOOK.md` §5, never intuition ([Principle 5](../../AGENTS.md)).
 - `cargo fmt` + zero-warning `cargo clippy` before delivery (`verify-before-done` gate).
-- Edition 2024, stable toolchain (pinned in `COMPUTER.md`); nightly only behind an ADR.
+- Edition 2024, stable toolchain (pinned in `.computers/MACBOOK.md`); nightly only behind an ADR.

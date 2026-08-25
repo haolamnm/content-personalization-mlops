@@ -32,4 +32,5 @@ Pin rationale: MongoDB is 8.0.x, not the newer 8.3-series, because Debezium 3.7 
 - Debezium Connect is a member of the *cdc* slice, not data — it arrives with `feat/cdc-wiring`.
 - Credentials come from root `.env` (copy `.env.example`); no secrets in compose files.
 - Host ports bind `127.0.0.1` only — LAN-inaccessible by default; relax per-service if a remote client ever needs direct reach.
-- Measured RSS goes to root `COMPUTER.md` §5 once the group first runs.
+- Runtime boxes: groups are authored and first-measured on MACBOOK (RAM-capped, one group at a time); THINKBOOK is the standing deployment target over Tailscale (`ssh thinkbook`) for full-stack sessions — per-box facts in [`.computers/`](../../.computers/).
+- Measured RSS goes to the running box's file §5 — MACBOOK §5 locally, THINKBOOK §5 remotely.

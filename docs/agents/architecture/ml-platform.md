@@ -18,7 +18,7 @@ This page answers one question: how does historical data become a measured model
 
 ## Feature plane
 
-Feast owns feature definitions and the contract between historical training and online serving. Iceberg is the offline store for point-in-time-correct values; Redis or Valkey is the online store for fresh low-latency values.
+Feast owns feature definitions and the contract between historical training and online serving. The current adapter reads the Iceberg event snapshot through its JDBC catalog, writes independent user and item Parquet projections, and uses Feast's supported Dask offline store for point-in-time retrieval; Redis is the online store for fresh low-latency values.
 
 A feature is not complete if it works only in one store. The offline and online definitions need parity, freshness rules, missing-value behavior, and tests.
 

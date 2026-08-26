@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
@@ -21,6 +22,16 @@ spec:
     spec:
       hostNetwork: {{ .Values.hostNetwork }}
       dnsPolicy: {{ if .Values.hostNetwork }}ClusterFirstWithHostNet{{ else }}ClusterFirst{{ end }}
+      # stage the jar into pod-local storage: PVC bind-mounts proved unstable for
+      # sustained jar random-access on this node (mid-run NoClassDefFoundError)
+      initContainers:
+        - name: stage-jar
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["sh", "-c", "cp -f /jars-src/{{ $.Values.jar.fileName }} /jars/ && sync"]
+          volumeMounts:
+            - { name: jars-src, mountPath: /jars-src, readOnly: true }
+            - { name: jars, mountPath: /jars }
       containers:
         - name: job
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -53,12 +64,23 @@ spec:
           # embedded Flink jobs have no HTTP endpoint; checkpoint freshness is the
           # liveness signal (same check the retired docker-run containers carried)
           livenessProbe:
+            initialDelaySeconds: 120
             exec:
               command: ["sh", "-c", "find {{ $.Values.checkpointDir }} -mmin -2 | grep -q chk"]
             periodSeconds: 60
             failureThreshold: 3
       volumes:
+      {{- if and .Values.jar.existingClaim .Values.jar.hostPath }}
+      {{- fail "jar.existingClaim and jar.hostPath are mutually exclusive — supply exactly one" }}
+      {{- end }}
         - name: jars
+          emptyDir: {}
+        - name: jars-src
+          {{- if .Values.jar.existingClaim }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.jar.existingClaim }}
+          {{- else }}
           hostPath:
-            path: {{ required "jar.hostPath is required (node-local artifacts dir)" .Values.jar.hostPath }}
+            path: {{ required "jar.hostPath or jar.existingClaim is required" .Values.jar.hostPath }}
             type: Directory
+          {{- end }}

@@ -109,6 +109,20 @@ def test_snapshot_emits_post_ingestion_state_for_a_delayed_event() -> None:
     assert available.iloc[0]["item_click_count_7d"] == 1
 
 
+def test_snapshot_emits_post_ingestion_state_for_equal_persisted_timestamps() -> None:
+    events = pd.DataFrame(
+        [
+            _event("u1", "i1", "click", "2026-01-01T10:00:00Z", "2026-01-01T10:00:00Z"),
+        ]
+    )
+
+    snapshot = build_feature_snapshot(events)
+
+    assert len(snapshot) == 2
+    assert list(snapshot["user_event_count_7d"]) == [0, 1]
+    assert list(snapshot["user_click_count_7d"]) == [0, 1]
+
+
 def test_snapshot_rolling_counts_expire_each_event_independently() -> None:
     events = pd.DataFrame(
         [

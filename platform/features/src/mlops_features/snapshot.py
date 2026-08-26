@@ -154,7 +154,7 @@ def build_feature_snapshot(events: pd.DataFrame) -> pd.DataFrame:
                     event.created_at, event.event_type, sequence
                 )
         for sequence, event in availability_group:
-            if event.ingested_at <= event.created_at:
+            if event.ingested_at < event.created_at:
                 continue
             user_events = available_user_history[event.user_id]
             item_events = available_item_history[event.item_id]

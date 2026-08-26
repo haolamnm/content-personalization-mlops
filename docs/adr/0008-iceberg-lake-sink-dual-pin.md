@@ -54,7 +54,7 @@ Jobs are separate containers with separate fat jars — they share no classpath,
 
 ## Consequences
 
-- Two JVM base images exist in the streaming plane; [image-pins](../agents/knowledge/image-pins.md) carries both with the trigger noted.
+- Two streaming jobs run as separate containers but share **one JVM base image**; [image-pins](../agents/knowledge/image-pins.md) carries it and both module pin sets with the trigger noted.
 - `events-lake` tests and e2e proof run against Flink 2.1.3 semantics — the embedded-watermark constraint documented in [flink-streaming](../agents/knowledge/flink-streaming.md) applies identically (parallelism 1 embedded).
 - Postgres gains a non-CDC role (catalog tables alongside replicated business tables) — backup/teardown orderings must treat both as stateful.
 - Compaction/maintenance is explicitly deferred, not forgotten: revisit when partition counts or file counts make scans visibly slow.

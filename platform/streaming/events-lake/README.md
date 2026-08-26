@@ -31,6 +31,7 @@ event-counts stays on Flink 2.2.1 meanwhile. When Iceberg **1.12.0** ships with 
 | `LAKE_WAREHOUSE` | `s3://mlops-lake` | warehouse bucket |
 | `MINIO_S3_ENDPOINT` | `http://localhost:9000` | S3-compatible endpoint override |
 | `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD` | `minioadmin` / `minioadmin` | MinIO credentials — reuse the compose `.env` values |
+| `CHECKPOINTS_DIRECTORY` | `file:///tmp/flink-checkpoints-lake` | dev-local default; set a durable shared URI for restore-capable deployments |
 
 The bucket is **not** auto-created by the job; create it once per venue: `mc mb local/mlops-lake`.
 
@@ -38,7 +39,9 @@ The bucket is **not** auto-created by the job; create it once per venue: `mc mb 
 
 ```bash
 mvn -q package
-# image pinned at adoption: eclipse-temurin:25-jre, digest sha256:f9e65324a37f2 verified
+cp target/events-lake.jar ~/.local/share/mlops/jars/events-lake.jar
+# image pinned at adoption: eclipse-temurin:25-jre,
+# digest sha256:f9e65324a37f28209ce7dd0e5149a7aa954520ed936fb87813cf6ded2400a112 verified
 docker run -d --name flink-events-lake --network mlops-data \
   -v ~/.local/share/mlops/jars:/jars:ro \
   -e KAFKA_BOOTSTRAP_SERVERS=kafka:9092 \
@@ -54,7 +57,7 @@ docker run -d --name flink-events-lake --network mlops-data \
 
 Checkpoint storage is `/tmp/flink-checkpoints-lake` inside the container (separate from event-counts so both run concurrently).
 
-**Cold-start caveat**: source starts at topic tail (`OffsetsInitializer.latest()`) and the container keeps checkpoints in ephemeral `/tmp` — every restart skips whatever was published while it was down. Same dev-tier tradeoff event-counts documents; durable state backend comes with the deployment-shape ADR. For a lake that claims to be a faithful record, prefer leaving this job running across experiments.
+**Cold-start caveat**: source starts at topic tail (`OffsetsInitializer.latest()`) and checkpoints default to ephemeral `/tmp` inside the container — **the default deployment is lossy development-only**: every restart skips whatever was published while it was down. Set `CHECKPOINTS_DIRECTORY` to a durable shared URI for anything you expect to restore. For a lake that claims to be a faithful record, prefer leaving this job running across experiments until the deployment-shape ADR lands.
 
 ## Verify data landed
 

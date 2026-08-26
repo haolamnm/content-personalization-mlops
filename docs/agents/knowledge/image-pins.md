@@ -34,7 +34,7 @@ Per-module pins ([ADR 0008](../../adr/0008-iceberg-lake-sink-dual-pin.md)): the 
 | `flink-connector-kafka` (event-counts / events-lake) | 5.0.0-2.2 / 5.0.0-2.1 | connector releases track specific Flink minors; matched pairs, no drift (review-blocking per java rules) |
 | Kafka clients | 4.2.x (transitive, both) | compatible with broker 4.3.1 |
 | iceberg-flink-runtime-2.1 + aws-bundle (events-lake) | 1.11.0 | latest release; no `-2.2` runtime exists yet — **trigger**: bump both jobs to one version when 1.12.0 ships |
-| Runtime image | `eclipse-temurin:25-jre`, digest `sha256:f9e65324a37f2…` verified | JDK 25 LTS per ADR 0004; both streaming jars |
+| Runtime image | `eclipse-temurin:25-jre`, digest `sha256:f9e65324a37f28209ce7dd0e5149a7aa954520ed936fb87813cf6ded2400a112` verified | JDK 25 LTS per ADR 0004; both streaming jars |
 
 ## CDC
 

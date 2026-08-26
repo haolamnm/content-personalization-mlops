@@ -102,9 +102,13 @@ public final class EventsLakeJob {
         // Same embedded constraint as event-counts: parallelism>1 never fires downstream logic
         // in LocalStreamEnvironment; revisit with the deployment-shape ADR.
         config.set(CoreOptions.DEFAULT_PARALLELISM, Integer.getInteger("flink.parallelism", 1));
-        // separate dir from event-counts so both jobs can run concurrently on one box
+        // separate dir from event-counts so both jobs can run concurrently on one box;
+        // override with a durable shared URI for restore-capable deployments (README)
         config.set(CheckpointingOptions.CHECKPOINT_STORAGE, "filesystem");
-        config.set(CheckpointingOptions.CHECKPOINTS_DIRECTORY, "file:///tmp/flink-checkpoints-lake");
+        config.set(
+                CheckpointingOptions.CHECKPOINTS_DIRECTORY,
+                Optional.ofNullable(System.getenv("CHECKPOINTS_DIRECTORY"))
+                        .orElse("file:///tmp/flink-checkpoints-lake"));
         return config;
     }
 }

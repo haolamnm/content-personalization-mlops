@@ -20,6 +20,7 @@ usage() {
     echo "  k3s-uninstall                 /usr/local/bin/k3s-uninstall.sh" >&2
     echo "  service ACTION UNIT           systemctl on k3s/k3s-node/docker" >&2
     echo "  kubeconfig-export             root-owned k3s.yaml -> caller ~/.kube/config" >&2
+    echo "  tls-san-sync                  add current tailnet IP to k3s tls-san config" >&2
     echo "  check                         liveness probe" >&2
 }
 
@@ -68,6 +69,23 @@ case "${1:-}" in
         install -o "$caller" -g "$caller_group" -m 600 \
             /etc/rancher/k3s/k3s.yaml "$caller_home/.kube/config"
         echo "exported to $caller_home/.kube/config"
+        ;;
+    tls-san-sync)
+        # k3s serving cert must cover the tailnet address or remote kubectl
+        # fails x509 verification; fetched on-box so nothing is passed in.
+        conf=/etc/rancher/k3s/config.yaml
+        ts=$(tailscale ip -4)
+        [ -n "$ts" ] || { echo "no tailnet ip available" >&2; exit 66; }
+        if [ -f "$conf" ] && grep -qx "  - $ts" "$conf"; then
+            echo "tls-san already present"
+        elif [ -f "$conf" ]; then
+            printf '  - %s\n' "$ts" >> "$conf"
+            echo "appended to existing config"
+        else
+            printf '# managed by mlops-sudo\ntls-san:\n  - %s\n' "$ts" > "$conf"
+            chmod 0644 "$conf"
+            echo "created $conf"
+        fi
         ;;
     check)
         echo "mlops-sudo ok"

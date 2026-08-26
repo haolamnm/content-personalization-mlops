@@ -64,7 +64,7 @@ Authoring-box kubeconfig is the exported copy with `server:` rewritten from loop
 k3s embeds its own containerd — **images built/pulled by Docker are invisible to it** (`ErrImagePull` despite `docker images` showing them). Two paths when migrating services off compose:
 
 1. Push to a registry the cluster can reach, or
-2. One-shot import: `docker save <image> | ssh thinkbook 'sudo /usr/local/bin/k3s ctr images import -'`
+2. One-shot import through the helper: `docker save <image> | ssh thinkbook 'sudo -n ~/.local/bin/mlops-sudo image-import'`
 
 Avoid `:latest` tags — its default `imagePullPolicy: Always` defeats locally imported images.
 

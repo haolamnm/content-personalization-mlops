@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": "scripts/gen_docs_metadata.py",
-  "count": 11,
+  "count": 12,
   "docs": [
     {
       "path": "docs/agents/README.md",
@@ -125,6 +125,25 @@
       "related": [
         "../knowledge/image-pins.md",
         "../../../platform/services/event-gateway/CONTEXT.md"
+      ]
+    },
+    {
+      "path": "docs/agents/knowledge/kubernetes-migration.md",
+      "id": "agents-knowledge-kubernetes-migration",
+      "title": "Kubernetes Migration",
+      "type": "knowledge",
+      "status": "active",
+      "date": "2026-08-26",
+      "tags": [
+        "kubernetes",
+        "k3s",
+        "helm",
+        "migration",
+        "kafka"
+      ],
+      "related": [
+        "../../adr/0007-kubernetes-adoption-k3s-helm.md",
+        "../runbooks/deploy-k8s.md"
       ]
     },
     {

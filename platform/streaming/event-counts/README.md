@@ -27,6 +27,10 @@ export JAVA_HOME=/opt/homebrew/opt/openjdk@25/libexec/openjdk.jdk/Contents/Home 
 mvn -q package          # target/event-counts.jar — shaded fat jar
 mvn -q test             # MiniCluster tests, deterministic, no brokers needed
 
+# Reproducible box build: THINKBOOK's host JDK is not the build toolchain.
+docker run --rm -v "$PWD:/workspace" -w /workspace \
+  maven:3.9-eclipse-temurin-25 mvn -q package
+
 # embedded run (LocalStreamEnvironment) against the mesh from inside the data network:
 # image pinned at adoption: eclipse-temurin:25-jre, digest sha256:f9e65324a37f2 verified
 docker run -d --name flink-event-counts --network mlops-data \

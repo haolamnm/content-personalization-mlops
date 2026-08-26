@@ -40,3 +40,7 @@ Punctuated per-record emission (running max − bound) over periodic emitters: d
 - Iceberg's flink runtime assumes `flink-table-common`, `flink-table-runtime`, and hadoop are **provided**; embedded fat jars declare all three compile-scope. Hadoop-common drags `slf4j-reload4j`/`log4j` in — exclude them or the second SLF4J binding hijacks logging.
 - Shading hadoop-common also merges dnsjava's service entry whose classes live only under `META-INF/versions/18/` — the shade manifest must set `Multi-Release: true` or JDK startup dies with `ServiceConfigurationError: InetAddressResolverProvider`.
 - RowData/TimestampData live in `flink-table-common`; internal timestamp representation is millisecond + nano-of-milli — use `TimestampData.fromInstant(...)` / `.toInstant()` for lossless round-trips; `fromEpochMillis` silently truncates sub-millisecond precision.
+
+## THINKBOOK build boundary
+
+The THINKBOOK host is not a supported Maven build environment: it has JDK 21 and no host Maven, while the jobs require JDK 25. The shade-defect investigation was closed on 2026-08-26 by building and testing both modules in `maven:3.9-eclipse-temurin-25`; `mvn -q package` and `mvn -q test` exited 0 for `event-counts` and `events-lake`, and no shaded-class failure reproduced. Use the pinned Maven container for box builds; do not diagnose a host-toolchain mismatch as a jar shade defect.

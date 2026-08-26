@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate   # single active consumer per group; no overlap during upgrades
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      hostNetwork: {{ .Values.hostNetwork }}
+      dnsPolicy: {{ if .Values.hostNetwork }}ClusterFirstWithHostNet{{ else }}ClusterFirst{{ end }}
+      containers:
+        - name: job
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["java"]
+          # k8s does NOT word-split $(VAR) expansions — render each flag as its own argv element
+          args:
+            {{- range $flag := without (splitList " " (trim $.Values.javaOpts)) "" }}
+            - {{ $flag | quote }}
+            {{- end }}
+            - "-jar"
+            - "/jars/{{ $.Values.jar.fileName }}"
+          env:
+            - name: CHECKPOINTS_DIRECTORY
+              value: "file://{{ $.Values.checkpointDir }}"
+            {{- range $k, $v := .Values.env }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+            {{- end }}
+          {{- with .Values.envSecretRef }}
+          envFrom:
+            - secretRef:
+                name: {{ . }}
+          {{- end }}
+          volumeMounts:
+            - name: jars
+              mountPath: /jars
+              readOnly: true
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          # embedded Flink jobs have no HTTP endpoint; checkpoint freshness is the
+          # liveness signal (same check the retired docker-run containers carried)
+          livenessProbe:
+            exec:
+              command: ["sh", "-c", "find {{ $.Values.checkpointDir }} -mmin -2 | grep -q chk"]
+            periodSeconds: 60
+            failureThreshold: 3
+      volumes:
+        - name: jars
+          hostPath:
+            path: {{ required "jar.hostPath is required (node-local artifacts dir)" .Values.jar.hostPath }}
+            type: Directory

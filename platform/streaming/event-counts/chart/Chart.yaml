@@ -1,0 +1,6 @@
+apiVersion: v2
+name: event-counts
+description: Flink job — per-type counts in 10s event-time tumbling windows over mlops.events.raw
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

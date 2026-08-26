@@ -1,0 +1,78 @@
+#!/bin/sh
+# mlops-sudo — narrow root helper for THINKBOOK bootstrap & admin.
+#
+# Privilege surface: /etc/sudoers.d/mlops exposes ONLY this file to user hlm:
+#   hlm ALL=(root) NOPASSWD: /home/hlm/.local/bin/mlops-sudo
+# Safety model: recognized subcommands exec whitelisted binaries directly (no
+# shell interpolation of arguments); systemd unit names are whitelisted;
+# everything else refuses. This file is repo-tracked — changes go through PR
+# review like any other code. Box copy must match the repo copy (compare
+# sha256 against platform/infra/thinkbook/mlops-sudo).
+set -eu
+
+usage() {
+    echo "usage: mlops-sudo <subcommand> [args]" >&2
+    echo "  pkg-install PKG...            dnf install -y PKG..." >&2
+    echo "  firewall ARGS...              firewall-cmd ARGS..." >&2
+    echo "  firewall-reload               firewall-cmd --reload" >&2
+    echo "  k3s-install                   official installer with --selinux" >&2
+    echo "  k3s-uninstall                 /usr/local/bin/k3s-uninstall.sh" >&2
+    echo "  service ACTION UNIT           systemctl on k3s/k3s-node/docker" >&2
+    echo "  kubeconfig-export             root-owned k3s.yaml -> caller ~/.kube/config" >&2
+    echo "  check                         liveness probe" >&2
+}
+
+case "${1:-}" in
+    pkg-install)
+        shift
+        [ $# -gt 0 ] || { usage; exit 64; }
+        exec dnf install -y "$@"
+        ;;
+    firewall)
+        shift
+        [ $# -gt 0 ] || { usage; exit 64; }
+        exec firewall-cmd "$@"
+        ;;
+    firewall-reload)
+        exec firewall-cmd --reload
+        ;;
+    k3s-install)
+        exec curl -sfL https://get.k3s.io | sh -s - --selinux
+        ;;
+    k3s-uninstall)
+        [ -x /usr/local/bin/k3s-uninstall.sh ] || {
+            echo "k3s not installed" >&2;
+            exit 66;
+        }
+        exec /usr/local/bin/k3s-uninstall.sh
+        ;;
+    service)
+        action="${2:-}"
+        unit="${3:-}"
+        case "$unit" in
+            k3s | k3s-node | docker) ;;
+            *) echo "unit not allowed: $unit" >&2; exit 65 ;;
+        esac
+        case "$action" in
+            start | stop | restart | status | enable | disable) ;;
+            *) echo "action not allowed: $action" >&2; exit 65 ;;
+        esac
+        exec systemctl "$action" "$unit"
+        ;;
+    kubeconfig-export)
+        caller="${SUDO_USER:-root}"
+        caller_home=$(getent passwd "$caller" | cut -d: -f6)
+        caller_group=$(id -gn "$caller")
+        install -d -o "$caller" -g "$caller_group" -m 700 "$caller_home/.kube"
+        install -o "$caller" -g "$caller_group" -m 600 \
+            /etc/rancher/k3s/k3s.yaml "$caller_home/.kube/config"
+        echo "exported to $caller_home/.kube/config"
+        ;;
+    check)
+        echo "mlops-sudo ok"
+        ;;
+    *)
+        usage
+        exit 64
+        ;;
+esac

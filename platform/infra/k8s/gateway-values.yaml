@@ -1,0 +1,6 @@
+hostNetwork: true
+image:
+  tag: latest
+env:
+  KAFKA_BOOTSTRAP_SERVERS: mlops-kafka-kafka-bootstrap.mlops-data.svc.cluster.local:9092
+  GATEWAY_ADDR: ":8080"

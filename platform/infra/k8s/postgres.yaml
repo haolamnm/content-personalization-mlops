@@ -1,0 +1,29 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: mlops-postgres
+  namespace: mlops-data
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.6-system-trixie
+  bootstrap:
+    initdb:
+      database: mlops
+      owner: mlops
+      secret:
+        name: mlops-postgres-app
+  postgresql:
+    parameters:
+      wal_level: logical
+      max_replication_slots: "10"
+      max_wal_senders: "10"
+  storage:
+    size: 10Gi
+    storageClass: local-path
+  managed:
+    roles:
+      - name: mlops
+        ensure: present
+        login: true
+        superuser: false
+        replication: true

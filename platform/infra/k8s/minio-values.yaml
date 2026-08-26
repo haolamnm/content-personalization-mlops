@@ -1,0 +1,19 @@
+mode: standalone
+replicas: 1
+drivesPerNode: 1
+image:
+  repository: minio/minio
+  tag: RELEASE.2025-09-07T16-13-09Z
+mcImage:
+  repository: minio/mc
+  tag: RELEASE.2024-11-21T17-21-54Z
+existingSecret: minio-credentials
+persistence:
+  enabled: true
+  storageClass: local-path
+  size: 20Gi
+  annotations:
+    helm.sh/resource-policy: keep
+service:
+  type: ClusterIP
+  port: "9000"

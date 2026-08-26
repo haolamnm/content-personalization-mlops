@@ -1,0 +1,23 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaConnector
+metadata:
+  name: postgres-source
+  namespace: mlops-data
+  labels:
+    strimzi.io/cluster: mlops-connect
+spec:
+  class: io.debezium.connector.postgresql.PostgresConnector
+  tasksMax: 1
+  config:
+    database.hostname: mlops-postgres-rw
+    database.port: "5432"
+    database.user: mlops
+    database.password: ${secrets:mlops-data/mlops-postgres-app:password}
+    database.dbname: mlops
+    topic.prefix: mlops
+    table.include.list: public.interactions
+    plugin.name: pgoutput
+    slot.name: mlops_cdc
+    publication.name: mlops_pub
+    publication.autocreate.mode: filtered
+    schema.history.internal.kafka.topic: cdc-schema-history-postgres

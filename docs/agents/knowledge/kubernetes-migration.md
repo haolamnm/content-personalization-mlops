@@ -16,7 +16,7 @@ Working facts from the compose→k3s cutover (streaming plane first; data group 
 
 ## The Kafka listener boundary (blocks in-cluster clients)
 
-The compose broker advertises `PLAINTEXT_HOST://localhost:29094` — a client that bootstrap-connects via the node IP receives metadata redirecting it to `localhost:29094`, which inside a pod is the pod itself. **No owned service can produce/consume across the boundary** until either Strimzi lands (data-group migration) or the broker gains a third listener advertising a routable address.
+The compose broker advertises `PLAINTEXT_HOST://localhost:29094` — a client that bootstrap-connects via the node IP receives metadata redirecting it to `localhost:29094`, which inside a pod is the pod itself. **Ordinary pod networking cannot produce/consume across the boundary** until either Strimzi lands (data-group migration) or the broker gains a third listener advertising a routable address. Exception: `hostNetwork` pods share the node's namespace, so loopback works for them.
 
 Dev-venue bridge: charts run with `hostNetwork: true` (+ `dnsPolicy: ClusterFirstWithHostNet`) so pods share the node's loopback where compose publishes 29094/15432/9000. This is explicitly a lossy dev-tier contract — production venue flips it to `false` once Kafka is in-cluster.
 

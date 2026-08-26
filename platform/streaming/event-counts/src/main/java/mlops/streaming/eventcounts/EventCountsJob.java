@@ -145,7 +145,11 @@ public final class EventCountsJob {
         config.set(CoreOptions.DEFAULT_PARALLELISM, Integer.getInteger("flink.parallelism", 1));
         config.set(PipelineOptions.AUTO_WATERMARK_INTERVAL, Duration.ofMillis(200));
         config.set(CheckpointingOptions.CHECKPOINT_STORAGE, "filesystem");
-        config.set(CheckpointingOptions.CHECKPOINTS_DIRECTORY, "file:///tmp/flink-checkpoints");
+        // env override enables durable/restore-capable deployments (matches events-lake)
+        config.set(
+                CheckpointingOptions.CHECKPOINTS_DIRECTORY,
+                Optional.ofNullable(System.getenv("CHECKPOINTS_DIRECTORY"))
+                        .orElse("file:///tmp/flink-checkpoints"));
         return config;
     }
 

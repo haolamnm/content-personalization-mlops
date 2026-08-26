@@ -18,6 +18,7 @@ usage() {
     echo "  firewall-reload               firewall-cmd --reload" >&2
     echo "  k3s-install                   official installer with --selinux" >&2
     echo "  k3s-uninstall                 /usr/local/bin/k3s-uninstall.sh" >&2
+    echo "  image-import                  docker save tarball on stdin -> cluster containerd" >&2
     echo "  service ACTION UNIT           systemctl on k3s/k3s-node/docker" >&2
     echo "  kubeconfig-export             root-owned k3s.yaml -> caller ~/.kube/config" >&2
     echo "  tls-san-sync                  add current tailnet IP to k3s tls-san config" >&2
@@ -47,6 +48,11 @@ case "${1:-}" in
             exit 66;
         }
         exec /usr/local/bin/k3s-uninstall.sh
+        ;;
+    image-import)
+        # stdin: a docker-save tarball; lands in the cluster's containerd store
+        [ -t 0 ] && { echo "expecting image tarball on stdin (docker save … | mlops-sudo image-import)" >&2; exit 64; }
+        exec /usr/local/bin/k3s ctr images import -
         ;;
     service)
         action="${2:-}"

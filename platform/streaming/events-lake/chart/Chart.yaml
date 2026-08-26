@@ -1,0 +1,6 @@
+apiVersion: v2
+name: events-lake
+description: Flink job — appends raw events to the mlops_lake.events_raw Iceberg table (ADR 0008)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

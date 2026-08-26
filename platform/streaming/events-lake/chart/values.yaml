@@ -1,0 +1,48 @@
+# Default values for the streaming Flink jobs.
+# Shared shape for event-counts and events-lake charts; venue overrides at install time.
+
+replicaCount: 1
+
+image:
+  repository: eclipse-temurin
+  tag: "25-jre"
+  pullPolicy: IfNotPresent   # node-local via ctr import
+
+# The job jar is staged on the node (XDG artifacts dir) and bind-mounted.
+# REQUIRED: absolute node path, supplied at install time from the box itself —
+# never committed here. helm ... --set jar.hostPath="$HOME/.local/share/mlops/jars"
+jar:
+  hostPath: ""               # fail-fast template guard below
+  fileName: events-lake.jar
+
+# Dev-venue bridge until in-cluster Kafka: pods share the node network so the
+# broker's published loopback listener resolves.
+hostNetwork: true
+
+javaOpts: >-
+  --add-opens=java.base/java.lang=ALL-UNNAMED
+  --add-opens=java.base/java.util=ALL-UNNAMED
+  --add-opens=java.base/java.io=ALL-UNNAMED
+  --add-opens=java.base/java.net=ALL-UNNAMED
+  --add-opens=java.base/java.nio=ALL-UNNAMED
+  --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+
+# single source for both the job config and its liveness probe
+checkpointDir: "/tmp/flink-checkpoints-lake"
+
+env:
+  KAFKA_BOOTSTRAP_SERVERS: localhost:29094
+  # 15432 = THINKBOOK's POSTGRES_HOST_PORT override (system postgres owns 5432
+  # there); stock compose bring-ups publish 5432 — override at install time
+  PG_JDBC_URL: jdbc:postgresql://localhost:15432/mlops
+  PG_USER: mlops
+  MINIO_S3_ENDPOINT: http://localhost:9000
+  LAKE_WAREHOUSE: s3://mlops-lake
+
+# Required here: Secret holding PG_PASSWORD, MINIO_ROOT_USER, MINIO_ROOT_PASSWORD.
+# Created on-box from .env before install. NOTE: absence fails late (pod
+# CreateContainerConfigError), not at render time — cluster lookups are
+# deliberately avoided to keep helm template gates offline-runnable.
+envSecretRef: "events-lake-config"
+
+resources: {}

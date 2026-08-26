@@ -1,0 +1,33 @@
+# Default values for event-gateway.
+# Venue-specific overrides come from -f/--set at install time, never from here.
+
+replicaCount: 1
+
+image:
+  repository: mlops/event-gateway
+  tag: ""            # defaults to .Chart.AppVersion
+  # node-local images (ctr import) require IfNotPresent; :latest would default to Always
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+# Dev venue (the current one): pods share the node network namespace so the
+# broker's published loopback listener resolves — see deploy-k8s runbook +
+# knowledge/kubernetes-migration.md. Production venue: false once Kafka runs
+# in-cluster.
+hostNetwork: true
+
+env:
+  KAFKA_BOOTSTRAP_SERVERS: localhost:29094
+  # explicit over implicit; under hostNetwork a bare ":8080" binds every node
+  # interface — LAN exposure is decided by the paired firewall rich-rules
+  # (tailnet accept priority=-1 / catch-drop), see knowledge/kubernetes-migration.md
+  GATEWAY_ADDR: ":8080"
+
+probes:
+  initialDelaySeconds: 3
+  periodSeconds: 10
+
+resources: {}

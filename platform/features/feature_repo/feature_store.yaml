@@ -1,0 +1,10 @@
+project: content_personalization
+registry: data/registry.db
+provider: local
+offline_store:
+  type: dask
+online_store:
+  type: redis
+  connection_string: "localhost:6379,password=change-me-8plus"
+  key_ttl_seconds: 604800
+entity_key_serialization_version: 3

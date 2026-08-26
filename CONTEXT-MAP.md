@@ -42,7 +42,7 @@ graph LR
 | **CDC** | Postgres change-data-capture into Kafka topics | Debezium (config) | `platform/infra/cdc` | live on THINKBOOK via Strimzi KafkaConnect; MongoDB CDC reserved |
 | **Stream Processing** | Validate, enrich, aggregate event streams; write to lakehouse; one Kafka Streams service for lightweight enrichment | Java (Flink job + one KStreams svc) | `platform/streaming` | live on THINKBOOK k3s (embedded, parallelism 1) |
 | **Lakehouse** | MinIO objects + Iceberg tables: bronze/silver/gold events | SQL + engine-managed | `platform/lakehouse` | raw Iceberg landing live on k3s; bronze/silver/gold reserved |
-| **Feature Platform** | Feast registry; offline views on Iceberg; online store in Redis; point-in-time correctness | Python | `platform/features` | reserved |
+| **Feature Platform** | Feast registry; independent user/item Iceberg-to-Parquet views; Dask point-in-time joins; seven-day Redis online keys | Python | `platform/features` | implemented; live-proven against k3s stores |
 | **Training** | Ray Train/Tune pipelines, experiment tracking, model promotion | Python | `platform/training` | reserved |
 | **Serving** | Model inference behind FastAPI/Ray Serve; candidate generation inputs | Python | `platform/serving` | reserved |
 | **Retrieval/Rank hot path** | Candidate fetch from Redis/Elasticsearch, feature-vector join, light scoring under strict tail-latency budget | Rust | `platform/services/retrieval` | reserved |
@@ -74,11 +74,11 @@ graph LR
 
 Facts, not aspirations.
 
-**Implemented**: workspace scaffolding — context-engineering layer (AGENTS/CONTEXT-MAP/rules/skills/docs), reference clone registered with generated metadata, metadata generators. **Phase-1 data foundation live on THINKBOOK k3s** (ADR 0006/0007): Strimzi Kafka, CloudNativePG PostgreSQL, charted MongoDB and MinIO, Strimzi KafkaConnect/Debezium, Go event gateway (`POST /events` → `mlops.events.raw`), first Flink job (`event-counts`, windowed counts), and the **streaming-owned raw-event landing zone** into an Iceberg table on MinIO (`events-lake`, ADR 0008's dual pin) — downstream lakehouse capabilities (bronze/silver/gold transforms) stay reserved under `platform/lakehouse`. Compose remains the low-memory authoring fallback.
+**Implemented**: workspace scaffolding — context-engineering layer (AGENTS/CONTEXT-MAP/rules/skills/docs), reference clone registered with generated metadata, metadata generators. **Phase-1 data foundation live on THINKBOOK k3s** (ADR 0006/0007): Strimzi Kafka, CloudNativePG PostgreSQL, charted MongoDB and MinIO, Strimzi KafkaConnect/Debezium, Go event gateway (`POST /events` → `mlops.events.raw`), first Flink job (`event-counts`, windowed counts), and the **streaming-owned raw-event landing zone** into an Iceberg table on MinIO (`events-lake`, ADR 0008's dual pin). **Phase-2 Feature Platform seam implemented**: the `ranking_features` Feast contract, causal seven-day snapshot builder, JDBC-catalog/DuckDB Iceberg adapter, Feast Dask point-in-time retrieval, and Redis materialization are tested locally and live-proven against k3s Iceberg and Redis stores. Downstream lakehouse capabilities (bronze/silver/gold transforms) stay reserved under `platform/lakehouse`. Compose remains the low-memory authoring fallback.
 
 **Reserved with binding decisions**: full pipeline shape above; language ownership per [ADR 0004](./docs/adr/0004-polyglot-language-per-concern.md); SvelteKit over Next.js per [ADR 0005](./docs/adr/0005-sveltekit-over-nextjs.md); RAM-profiled local infra per [ADR 0003](./docs/adr/0003-ram-budgeted-local-infrastructure.md); k3s + Helm adoption per [ADR 0007](./docs/adr/0007-kubernetes-adoption-k3s-helm.md).
 
-**Not built**: everything downstream of the raw-event landing zone — feature store, training, serving, app layer, observability, analytics. Current phase state in [`.worklog/FOCUS.md`](./.worklog/FOCUS.md) (local-only).
+**Not built**: training, serving, app layer, observability, analytics, and the MongoDB content-catalog seam. Current phase state in [`.worklog/FOCUS.md`](./.worklog/FOCUS.md) (local-only).
 
 ## 5. Engineering Contexts
 

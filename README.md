@@ -6,7 +6,7 @@ A workspace where an MLOps platform is built from zero: user interactions flow t
 
 ## Status
 
-Phase 1 of 9 (phases 0–8; data foundation): architecture decisions are locked, and the first runtime slice is implemented in `platform/` — PostgreSQL, MongoDB, Kafka, Debezium, MinIO, the Go event gateway, and Java streaming jobs. The THINKBOOK k3s cutover is complete; feature, training, serving, app, observability, and analytics remain reserved for later phases.
+Phase 2 of 9 (phases 0–8; feature platform): architecture decisions are locked, the Phase 1 data foundation is live, and the Feature Platform seam is implemented in `platform/` — Feast user/item features with Iceberg point-in-time history and Redis online materialization. The THINKBOOK k3s cutover is complete; training, serving, app, observability, and analytics remain reserved for later phases.
 
 ## Polyglot by concern
 

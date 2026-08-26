@@ -26,7 +26,7 @@ This page answers one question: which architecture page should I read before pro
 | Go event gateway | Interaction ingestion | Implemented slice | [System flow](./system-flow.md) |
 | Flink / Kafka Streams | Event-time processing and enrichment | Implemented/target stream plane | [System flow](./system-flow.md) |
 | MinIO / Iceberg | Durable object and table storage | Implemented slice | [Data platform](./data-platform.md) |
-| Feast / Redis | Offline/online feature contract | Target | [ML platform](./ml-platform.md) |
+| Feast / Redis | Offline/online feature contract | Implemented slice | [ML platform](./ml-platform.md) |
 | Ray / MLflow | Training and model lifecycle | Target | [ML platform](./ml-platform.md) |
 | FastAPI / Ray Serve | Online model inference | Target | [ML platform](./ml-platform.md) |
 | Rust retrieval / Go BFF / SvelteKit | Recommendation request path and product surface | Target | [System flow](./system-flow.md) |

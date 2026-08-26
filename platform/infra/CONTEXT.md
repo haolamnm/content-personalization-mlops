@@ -24,6 +24,7 @@ Compose-managed authoring groups and a k3s deployment target ([ADR 0007](../../d
 | MongoDB | `mongo:8.0.29` | 27017 | `mongosh ping` |
 | Kafka (KRaft) | `apache/kafka:4.3.1` | 29094 (host) · 9092 (mesh) | broker-api-versions |
 | MinIO | `minio/minio:RELEASE.2025-09-07T16-13-09Z` | 9000 / 9001 | `mc ready local` |
+| Redis | `bitnamilegacy/redis:8.0.3-debian-12-r3` | 6379 | `redis-cli ping` |
 
 Pin rationale: MongoDB is 8.0.x, not the newer 8.3-series, because Debezium 3.7 certifies Mongo 6.0/7.0/8.0 only — and the live PostgreSQL CDC slice on THINKBOOK (cdc group below) depends on that certification. MinIO's community repo was archived upstream (2026-04-25); this tag is the last pullable community image.
 

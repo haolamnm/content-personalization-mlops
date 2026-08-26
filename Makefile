@@ -21,6 +21,7 @@ data-health:
 	docker exec data-mongodb mongosh --quiet --eval "db.adminCommand('ping').ok"
 	docker exec data-kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null && echo "kafka: topics listable"
 	docker exec data-minio mc ready local && echo "minio: ready"
+	docker exec data-redis sh -c 'redis-cli --no-auth-warning -a "$${REDIS_PASSWORD}" ping' | rg -q '^PONG$$' && echo "redis: ready"
 
 data-stats:
 	docker stats --no-stream
@@ -75,12 +76,21 @@ K8S_DIR := platform/infra/k8s
 KUBECTL ?= kubectl
 HELM ?= helm
 
-.PHONY: k8s-validate k8s-operators k8s-data-up k8s-owned-up k8s-up
+.PHONY: features-test features-lint k8s-validate k8s-operators k8s-data-up k8s-owned-up k8s-up
+
+features-test:
+	uv run --directory platform/features pytest -q
+
+features-lint:
+	uv run --directory platform/features ruff check src tests feature_repo
+	uv run --directory platform/features ty check src tests feature_repo
+	uv run --directory platform/features basedpyright src tests feature_repo
 
 k8s-validate:
 	$(KUBECTL) apply --dry-run=server -f $(K8S_DIR)/namespaces.yaml -f $(K8S_DIR)/kafka.yaml -f $(K8S_DIR)/postgres.yaml -f $(K8S_DIR)/connect.yaml -f $(K8S_DIR)/connector-postgres.yaml
 	$(HELM) template mlops-mongodb bitnami/mongodb --version 16.5.45 --namespace mlops-data -f $(K8S_DIR)/mongodb-values.yaml >/dev/null
 	$(HELM) template mlops-minio minio/minio --version 5.4.0 --namespace mlops-data -f $(K8S_DIR)/minio-values.yaml >/dev/null
+	$(HELM) template mlops-redis bitnami/redis --version 28.0.10 --namespace mlops-data -f $(K8S_DIR)/redis-values.yaml >/dev/null
 	$(HELM) template event-counts platform/streaming/event-counts/chart --namespace mlops-streaming -f $(K8S_DIR)/event-counts-values.yaml >/dev/null
 	$(HELM) template events-lake platform/streaming/events-lake/chart --namespace mlops-streaming -f $(K8S_DIR)/events-lake-values.yaml >/dev/null
 	$(HELM) template gateway platform/services/event-gateway/chart --namespace mlops-gateway -f $(K8S_DIR)/gateway-values.yaml >/dev/null
@@ -94,6 +104,7 @@ k8s-data-up: k8s-operators
 	$(KUBECTL) apply -f $(K8S_DIR)/kafka.yaml -f $(K8S_DIR)/postgres.yaml
 	$(HELM) upgrade --install mlops-mongodb bitnami/mongodb --version 16.5.45 --namespace mlops-data -f $(K8S_DIR)/mongodb-values.yaml --wait
 	$(HELM) upgrade --install mlops-minio minio/minio --version 5.4.0 --namespace mlops-data -f $(K8S_DIR)/minio-values.yaml --wait
+	$(HELM) upgrade --install mlops-redis bitnami/redis --version 28.0.10 --namespace mlops-data -f $(K8S_DIR)/redis-values.yaml --wait
 	$(KUBECTL) apply -f $(K8S_DIR)/connect.yaml -f $(K8S_DIR)/connector-postgres.yaml
 
 k8s-owned-up: k8s-data-up

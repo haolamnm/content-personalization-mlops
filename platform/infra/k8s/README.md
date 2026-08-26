@@ -2,7 +2,7 @@
 
 These manifests and values are the standing THINKBOOK runtime after the Phase 1 cutover. Compose files remain the low-memory authoring venue on MACBOOK, but the box must not run both data planes at once.
 
-The operator pins are Strimzi 1.1.0 with Kafka 4.3.0, CloudNativePG chart 0.29.0 with PostgreSQL 18.6, Bitnami MongoDB chart 16.5.45 with the Bitnami Legacy MongoDB 8.0.13 image, and MinIO chart 5.4.0 with the project MinIO image pin. MongoDB is restored logically, so the chart image does not copy the Compose data directory across versions.
+The operator pins are Strimzi 1.1.0 with Kafka 4.3.0, CloudNativePG chart 0.29.0 with PostgreSQL 18.6, Bitnami MongoDB chart 16.5.45 with the Bitnami Legacy MongoDB 8.0.13 image, MinIO chart 5.4.0 with the project MinIO image pin, and Bitnami Redis chart 28.0.10 with the Bitnami Legacy Redis 8.0.3 image. MongoDB is restored logically, so the chart image does not copy the Compose data directory across versions.
 
 ## Apply order
 
@@ -21,13 +21,14 @@ helm upgrade --install cnpg cnpg/cloudnative-pg --version 0.29.0 --namespace cnp
 kubectl apply -f platform/infra/k8s/kafka.yaml -f platform/infra/k8s/postgres.yaml
 helm upgrade --install mlops-mongodb bitnami/mongodb --version 16.5.45 --namespace mlops-data -f platform/infra/k8s/mongodb-values.yaml --wait
 helm upgrade --install mlops-minio minio/minio --version 5.4.0 --namespace mlops-data -f platform/infra/k8s/minio-values.yaml --wait
+helm upgrade --install mlops-redis bitnami/redis --version 28.0.10 --namespace mlops-data -f platform/infra/k8s/redis-values.yaml --wait
 kubectl apply -f platform/infra/k8s/connect.yaml -f platform/infra/k8s/connector-postgres.yaml
 helm template event-counts platform/streaming/event-counts/chart --namespace mlops-streaming -f platform/infra/k8s/event-counts-values.yaml | kubectl apply -f -
 helm template events-lake platform/streaming/events-lake/chart --namespace mlops-streaming -f platform/infra/k8s/events-lake-values.yaml | kubectl apply -f -
 helm template gateway platform/services/event-gateway/chart --namespace mlops-gateway -f platform/infra/k8s/gateway-values.yaml | kubectl apply -f -
 ```
 
-Create `mlops-postgres-app`, `mongodb-auth`, `minio-credentials`, and `events-lake-config` before applying the dependent resources. The Postgres Secret uses `username` and `password`; Mongo uses `mongodb-root-password`; MinIO uses `rootUser` and `rootPassword`; the lake secret uses `PG_PASSWORD`, `MINIO_ROOT_USER`, and `MINIO_ROOT_PASSWORD`.
+Create `mlops-postgres-app`, `mongodb-auth`, `minio-credentials`, `redis-auth`, and `events-lake-config` before applying the dependent resources. The Postgres Secret uses `username` and `password`; Mongo uses `mongodb-root-password`; MinIO uses `rootUser` and `rootPassword`; Redis uses `redis-password`; the lake secret uses `PG_PASSWORD`, `MINIO_ROOT_USER`, and `MINIO_ROOT_PASSWORD`.
 
 The first migration is a data operation, not a Helm upgrade: take logical PostgreSQL, Mongo archive, Kafka metadata, and MinIO object backups; restore PostgreSQL and MinIO; recreate Kafka topics through `kafka.yaml`; restore Mongo users/data logically; then stop Compose CDC and data containers only after all k8s readiness and content checks pass.
 

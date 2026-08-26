@@ -8,11 +8,11 @@ image:
   tag: "25-jre"
   pullPolicy: IfNotPresent   # node-local via ctr import
 
-# The job jar is staged on the node (XDG artifacts dir) and bind-mounted.
-# REQUIRED: absolute node path, supplied at install time from the box itself —
-# never committed here. helm ... --set jar.hostPath="$HOME/.local/share/mlops/jars"
+# The job jar comes from a PVC (SELinux-clean provisioning path) or a node
+# bind-mount. Supply exactly one at install time; never committed here.
 jar:
-  hostPath: ""               # fail-fast template guard below
+  existingClaim: ""          # PVC holding the jars (preferred on SELinux nodes)
+  hostPath: ""               # fallback bind-mount; fails fast when both empty
   fileName: event-counts.jar
 
 # Dev-venue bridge until in-cluster Kafka: pods share the node network so the
@@ -28,7 +28,7 @@ javaOpts: >-
   --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
 
 env:
-  KAFKA_BOOTSTRAP_SERVERS: localhost:29094
+  KAFKA_BOOTSTRAP_SERVERS: "localhost:29094"
 
 # single source for both the job config and its liveness probe
 checkpointDir: "/tmp/flink-checkpoints"

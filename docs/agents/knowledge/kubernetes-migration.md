@@ -36,7 +36,7 @@ k3s embeds its own containerd; Docker-built images are invisible to pods. Path: 
 
 ## Chart conventions (owned services)
 
-One chart per module, no umbrella. Values files carry only non-secret config; credentials arrive via `envSecretRef` → pre-created Secret (created on-box from the box `.env`, never through tracked files or chat). Job charts require `jar.hostPath`-style node paths as install-time inputs — fail-fast template guards refuse empty values.
+One chart per module, no umbrella. Values files carry only non-secret config; credentials arrive via `envSecretRef` → pre-created Secret (created on-box from the box `.env`, never through tracked files or chat). Job charts take a jar source at install time: `jar.existingClaim` (PVC — preferred; SELinux denies pod reads of home-dir hostPaths) or `jar.hostPath` fallback. The init container stages the jar into pod-local `emptyDir` before start — PVC bind-mounts proved unstable for sustained jar random-access on this node (mid-run `NoClassDefFoundError`). Template guards refuse empty or ambiguous sources.
 
 Probe semantics: the gateway's `/healthz` is process-liveness only — it does not gate on Kafka reachability. Job charts instead liveness-probe **checkpoint freshness** (exec `find <dir> -mmin -2`), restoring the healthcheck parity the retired docker-run containers had.
 

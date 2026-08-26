@@ -8,11 +8,11 @@ image:
   tag: "25-jre"
   pullPolicy: IfNotPresent   # node-local via ctr import
 
-# The job jar is staged on the node (XDG artifacts dir) and bind-mounted.
-# REQUIRED: absolute node path, supplied at install time from the box itself —
-# never committed here. helm ... --set jar.hostPath="$HOME/.local/share/mlops/jars"
+# The job jar comes from a PVC (SELinux-clean provisioning path) or a node
+# bind-mount. Supply exactly one at install time; never committed here.
 jar:
-  hostPath: ""               # fail-fast template guard below
+  existingClaim: ""          # PVC holding the jars (preferred on SELinux nodes)
+  hostPath: ""               # fallback bind-mount; fails fast when both empty
   fileName: events-lake.jar
 
 # Dev-venue bridge until in-cluster Kafka: pods share the node network so the
@@ -31,7 +31,7 @@ javaOpts: >-
 checkpointDir: "/tmp/flink-checkpoints-lake"
 
 env:
-  KAFKA_BOOTSTRAP_SERVERS: localhost:29094
+  KAFKA_BOOTSTRAP_SERVERS: "localhost:29094"
   # 15432 = THINKBOOK's POSTGRES_HOST_PORT override (system postgres owns 5432
   # there); stock compose bring-ups publish 5432 — override at install time
   PG_JDBC_URL: jdbc:postgresql://localhost:15432/mlops

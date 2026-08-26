@@ -72,11 +72,11 @@ graph LR
 
 Facts, not aspirations.
 
-**Implemented**: workspace scaffolding only — context-engineering layer (AGENTS/CONTEXT-MAP/rules/skills/docs), reference clone registered with generated metadata, metadata generator. First runtime artifact: `data` compose group defined under [`platform/infra/`](./platform/infra/CONTEXT.md) (pinned images + health checks; config-validated, not yet run). Remote runtime secured: THINKBOOK (Fedora, Docker+Compose) reachable via hardened SSH over Tailscale — deploy-target ADR pending.
+**Implemented**: workspace scaffolding — context-engineering layer (AGENTS/CONTEXT-MAP/rules/skills/docs), reference clone registered with generated metadata, metadata generators. **Phase-1 data foundation live on THINKBOOK** (ADR 0006): `data` compose group running (PG/Mongo/Kafka/MinIO, pinned images + health checks), CDC end-to-end (Debezium → `mlops.public.interactions`), Go event gateway (`POST /events` → `mlops.events.raw`), first Flink job (`event-counts`, windowed counts), and the lakehouse surface (`events-lake` → Iceberg table on MinIO, ADR 0008's dual pin). Kubernetes designed, cutover pending (ADR 0007).
 
-**Reserved with binding decisions**: full pipeline shape above; language ownership per [ADR 0004](./docs/adr/0004-polyglot-language-per-concern.md); SvelteKit over Next.js per [ADR 0005](./docs/adr/0005-sveltekit-over-nextjs.md); RAM-profiled local infra per [ADR 0003](./docs/adr/0003-ram-budgeted-local-infrastructure.md).
+**Reserved with binding decisions**: full pipeline shape above; language ownership per [ADR 0004](./docs/adr/0004-polyglot-language-per-concern.md); SvelteKit over Next.js per [ADR 0005](./docs/adr/0005-sveltekit-over-nextjs.md); RAM-profiled local infra per [ADR 0003](./docs/adr/0003-ram-budgeted-local-infrastructure.md); k3s + Helm adoption per [ADR 0007](./docs/adr/0007-kubernetes-adoption-k3s-helm.md).
 
-**Not built**: everything else — no services, no notebooks, no dashboards; the data group has never been started. Phase 0 (reference study) is in progress; current state in [`.worklog/FOCUS.md`](./.worklog/FOCUS.md) (local-only).
+**Not built**: everything downstream of the raw-event landing zone — feature store, training, serving, app layer, observability, analytics. Current phase state in [`.worklog/FOCUS.md`](./.worklog/FOCUS.md) (local-only).
 
 ## 5. Engineering Contexts
 

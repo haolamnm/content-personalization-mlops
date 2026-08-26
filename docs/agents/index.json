@@ -85,6 +85,8 @@
       "related": [
         "../knowledge/image-pins.md",
         "../../../platform/streaming/event-counts/README.md",
+        "../../../platform/streaming/events-lake/README.md",
+        "../../adr/0008-iceberg-lake-sink-dual-pin.md",
         "../../../.agents/rules/java-streaming-correctness.md"
       ]
     },

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": "scripts/gen_docs_metadata.py",
-  "count": 18,
+  "count": 19,
   "docs": [
     {
       "path": "docs/README.md",
@@ -148,6 +148,26 @@
       ]
     },
     {
+      "path": "docs/adr/0008-iceberg-lake-sink-dual-pin.md",
+      "id": "adr-0008",
+      "title": "ADR 0008 — Iceberg Lake Sink via Dual-Pin (Flink 2.1 + Iceberg 1.11)",
+      "type": "adr",
+      "status": "accepted",
+      "date": "2026-08-26",
+      "tags": [
+        "streaming",
+        "iceberg",
+        "lakehouse",
+        "minio",
+        "flink"
+      ],
+      "related": [
+        "0003-ram-budgeted-local-infrastructure.md",
+        "../../docs/agents/knowledge/flink-streaming.md",
+        "../../docs/agents/knowledge/image-pins.md"
+      ]
+    },
+    {
       "path": "docs/agents/README.md",
       "id": "agents-docs-map",
       "title": "Agents Docs Map",
@@ -229,6 +249,8 @@
       "related": [
         "../knowledge/image-pins.md",
         "../../../platform/streaming/event-counts/README.md",
+        "../../../platform/streaming/events-lake/README.md",
+        "../../adr/0008-iceberg-lake-sink-dual-pin.md",
         "../../../.agents/rules/java-streaming-correctness.md"
       ]
     },

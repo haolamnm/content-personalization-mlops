@@ -57,6 +57,7 @@ Skills are auto-discovered from `.agents/skills/`. Every skill is bound by the r
 | Direction | `maintain-worklog`, `handoff` | Track durable project state (`.worklog/`) and compact context between sessions. |
 | Design | `grilling`, `wait-what`, `domain-modeling`, `codebase-design` | Stress-test requirements, re-pitch complexity in domain terms, sharpen CONTEXT-MAP vocabulary and module seams before coding. |
 | Study | `studying-mlops` | Protocol for walking a reference repo end-to-end and producing its topic note + index updates. |
+| Learn | `teach` | Multi-session guided teaching with per-topic state in `.notes/teach/<topic>/` (mission, ELI5 visual explainers, lessons, glossary, learning records). |
 | Implement | `implement`, `tdd` | Drive feature, bug-fix, and test work with incremental verification loops. |
 | Review | `deslopify`, `codebase-review`, `improve-codebase-architecture` | Pre-PR diff slop removal, two-axis review against spec and standards, architectural friction scans. |
 | Research | `experiment` | Run isolated benchmark/model experiments against baselines; record outcomes in `docs/agents/`. |

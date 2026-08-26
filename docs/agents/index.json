@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": "scripts/gen_docs_metadata.py",
-  "count": 10,
+  "count": 11,
   "docs": [
     {
       "path": "docs/agents/README.md",
@@ -146,6 +146,26 @@
         "../../adr/0004-polyglot-language-per-concern.md",
         "../../adr/0005-sveltekit-over-nextjs.md",
         "../../../.agents/rules/python-envs-and-quality.md"
+      ]
+    },
+    {
+      "path": "docs/agents/runbooks/deploy-k8s.md",
+      "id": "agents-runbook-deploy-k8s",
+      "title": "Runbook: Operate the k3s Cluster",
+      "type": "runbook",
+      "status": "active",
+      "date": "2026-08-26",
+      "tags": [
+        "kubernetes",
+        "k3s",
+        "helm",
+        "thinkbook",
+        "deploy"
+      ],
+      "related": [
+        "../../adr/0007-kubernetes-adoption-k3s-helm.md",
+        "deploy-thinkbook.md",
+        "../../../.computers/THINKBOOK.md"
       ]
     },
     {

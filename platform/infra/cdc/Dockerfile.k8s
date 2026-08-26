@@ -1,0 +1,8 @@
+FROM quay.io/debezium/connect:3.6.1.Final AS debezium
+
+FROM quay.io/strimzi/kafka:1.1.0-kafka-4.3.0
+USER root
+COPY --from=debezium /kafka/connect/debezium-connector-postgres /opt/kafka/plugins/debezium-connector-postgres
+COPY --from=debezium /kafka/connect/debezium-connector-mongodb /opt/kafka/plugins/debezium-connector-mongodb
+RUN chown -R 1001:0 /opt/kafka/plugins/debezium-connector-postgres /opt/kafka/plugins/debezium-connector-mongodb
+USER 1001

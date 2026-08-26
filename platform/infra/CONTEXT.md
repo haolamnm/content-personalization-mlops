@@ -4,7 +4,7 @@ id: infra-context
 date: 2026-08-25
 type: context
 status: active
-tags: [infrastructure, docker-compose, data]
+tags: [infrastructure, docker-compose, kubernetes, data]
 related:
   - ../../CONTEXT-MAP.md
   - ../../docs/adr/0003-ram-budgeted-local-infrastructure.md
@@ -12,11 +12,11 @@ related:
 
 # Infra (`platform/infra/`)
 
-Compose-managed infrastructure groups ([ADR 0003](../../docs/adr/0003-ram-budgeted-local-infrastructure.md)): one file = one profile group; exactly one group runs at a time. Lifecycle rules live in the [`managing-mlops-services`](../../.agents/skills/managing-mlops-services/SKILL.md) skill; Makefile targets wrap its flow (preflight → up → health → stats → down).
+Compose-managed authoring groups and a k3s deployment target ([ADR 0007](../../docs/adr/0007-kubernetes-adoption-k3s-helm.md)): Compose remains the low-memory MACBOOK venue, while THINKBOOK's standing runtime is the operator/chart deployment under [`k8s/`](./k8s/). The two data planes must not run concurrently on THINKBOOK.
 
 ## Groups
 
-### data — `compose.data.yaml` · status: **defined, not yet run**
+### data — `compose.data.yaml` · status: **fallback only; migrated to k3s on THINKBOOK 2026-08-26**
 
 | Service | Image (pinned 2026-08-25) | Host port | Health check |
 |:---|:---|:---|:---|
@@ -27,7 +27,7 @@ Compose-managed infrastructure groups ([ADR 0003](../../docs/adr/0003-ram-budget
 
 Pin rationale: MongoDB is 8.0.x, not the newer 8.3-series, because Debezium 3.7 certifies Mongo 6.0/7.0/8.0 only — and the live PostgreSQL CDC slice on THINKBOOK (cdc group below) depends on that certification. MinIO's community repo was archived upstream (2026-04-25); this tag is the last pullable community image.
 
-### cdc — `compose.cdc.yaml` · status: **live on THINKBOOK**
+### cdc — `compose.cdc.yaml` · status: **fallback only; migrated to Strimzi KafkaConnect on THINKBOOK 2026-08-26**
 
 | Service | Image (pinned 2026-08-25) | Host port | Health check |
 |:---|:---|:---|:---|
@@ -35,7 +35,7 @@ Pin rationale: MongoDB is 8.0.x, not the newer 8.3-series, because Debezium 3.7 
 
 Joins the data group's named network (`mlops-data`, external) so `postgres`/`kafka` hostnames resolve; bring-up order enforced by `make cdc-up` (starts postgres+kafka first, waits for connect health). Pin is 3.6.x, not the in-development 3.7 alphas, because 3.6.1.Final already ships Kafka 4.3 + PostgreSQL 18 support.
 
-### gateway — `compose.gateway.yaml` · status: **live on THINKBOOK**
+### gateway — `compose.gateway.yaml` · status: **fallback only; migrated to the k3s chart on THINKBOOK 2026-08-26**
 
 | Service | Image | Host port | Health check |
 |:---|:---|:---|:---|
@@ -45,7 +45,7 @@ First owned service (Go): `POST /events` validates and produces to topic `mlops.
 
 ## Boundaries
 
-- The sanctioned compose set is **data + cdc + gateway**; all three are whitelisted in the Makefile guard and any further project is refused. The one-group-at-a-time rule applies on MACBOOK; THINKBOOK permits the documented trio coexistence under its larger budget.
+- The sanctioned compose set is **data + cdc + gateway** for the MACBOOK fallback; all three remain whitelisted in the Makefile guard. THINKBOOK runs the corresponding k3s resources instead, with no Compose data/CDC containers after cutover.
 - Credentials come from root `.env` (copy `.env.example`); no secrets in compose files.
 - Host ports bind `127.0.0.1` only — LAN-inaccessible by default; relax per-service if a remote client ever needs direct reach.
 - Runtime boxes: groups are authored and first-measured on MACBOOK (RAM-capped, one group at a time); THINKBOOK is the standing deployment target over Tailscale (`ssh thinkbook`) for full-stack sessions — per-box facts in [`.computers/`](../../.computers/).

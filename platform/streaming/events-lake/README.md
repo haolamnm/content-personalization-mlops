@@ -40,6 +40,9 @@ The bucket is **not** auto-created by the job; create it once per venue: `mc mb 
 ```bash
 mvn -q package
 cp target/events-lake.jar ~/.local/share/mlops/jars/events-lake.jar
+# Reproducible box build: THINKBOOK's host JDK is not the build toolchain.
+docker run --rm -v "$PWD:/workspace" -w /workspace \
+  maven:3.9-eclipse-temurin-25 mvn -q package
 # image pinned at adoption: eclipse-temurin:25-jre,
 # digest sha256:f9e65324a37f28209ce7dd0e5149a7aa954520ed936fb87813cf6ded2400a112 verified
 docker run -d --name flink-events-lake --network mlops-data \

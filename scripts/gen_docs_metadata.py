@@ -4,15 +4,16 @@
 Markdown files keep YAML frontmatter as the source of truth for their own
 metadata; this script walks the tree, parses it, and emits:
 
-  docs/index.json         — every tracked doc under docs/
-  docs/adr/index.json     — type: adr records
-  docs/agents/index.json  — every agent doc under docs/agents/
+  docs/index.json                    — every tracked doc under docs/
+  docs/adr/index.json                — type: adr records
+  docs/agents/index.json             — every agent doc under docs/agents/
+  docs/agents/architecture/index.json — every architecture doc under its section
 
 Generated artifacts: never hand-edit (see .agents/rules/generated-artifacts.md).
 They are tracked in git — regenerate before committing doc changes.
 
 Usage:
-  python3 scripts/gen_docs_metadata.py           # write all three indexes
+  python3 scripts/gen_docs_metadata.py           # write all four indexes
   python3 scripts/gen_docs_metadata.py --check   # exit 1 if output would change
 """
 
@@ -147,6 +148,11 @@ def main() -> int:
             r
             for r in records
             if r.get("type") != "adr" and r["path"].startswith("docs/agents/")
+        ],
+        DOCS / "agents" / "architecture" / "index.json": [
+            r
+            for r in records
+            if r["path"].startswith("docs/agents/architecture/")
         ],
     }
 

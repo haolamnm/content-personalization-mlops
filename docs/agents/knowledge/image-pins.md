@@ -39,3 +39,7 @@ Per-module pins ([ADR 0008](../../adr/0008-iceberg-lake-sink-dual-pin.md)): the 
 ## CDC
 
 `quay.io/debezium/connect:3.6.1.Final` — newest stable; Docker Hub mirror stale at 3.0, so quay is the source of truth for this artifact.
+
+## Kubernetes cutover
+
+THINKBOOK's standing data plane uses Strimzi 1.1.0/Kafka 4.3.0, CloudNativePG PostgreSQL 18.6, MinIO chart 5.4.0 with `minio/minio:RELEASE.2025-09-07T16-13-09Z`, and MongoDB chart 16.5.45 with `bitnamilegacy/mongodb:8.0.13-debian-12-r0`. The Mongo image is a logical-restore target; no Compose Mongo files are reused.

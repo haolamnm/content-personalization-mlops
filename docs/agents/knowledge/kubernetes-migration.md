@@ -12,17 +12,17 @@ related:
 
 # Kubernetes Migration
 
-Working facts from the compose→k3s cutover (streaming plane first; data group last).
+Working facts from the completed compose→k3s cutover on THINKBOOK (2026-08-26).
 
 ## The Kafka listener boundary (blocks in-cluster clients)
 
 The compose broker advertises `PLAINTEXT_HOST://localhost:29094` — a client that bootstrap-connects via the node IP receives metadata redirecting it to `localhost:29094`, which inside a pod is the pod itself. **Ordinary pod networking cannot produce/consume across the boundary** until either Strimzi lands (data-group migration) or the broker gains a third listener advertising a routable address. Exception: `hostNetwork` pods share the node's namespace, so loopback works for them.
 
-Dev-venue bridge: charts run with `hostNetwork: true` (+ `dnsPolicy: ClusterFirstWithHostNet`) so pods share the node's loopback where compose publishes 29094/15432/9000. This is explicitly a lossy dev-tier contract — production venue flips it to `false` once Kafka is in-cluster.
+The bridge is retired on THINKBOOK: Strimzi's internal `mlops-kafka-kafka-bootstrap.mlops-data.svc.cluster.local:9092` is the only Kafka endpoint, and the Flink jobs use ordinary pod networking. The gateway keeps `hostNetwork: true` only to retain the node's port-8080 access contract; its Kafka client uses the in-cluster service.
 
 ## Consumer-group cutover ordering
 
-Two instances sharing a group split partitions silently. When moving a consumer: retire the docker-run container first (`docker rm -f …`), then `helm install` with the same group id — offsets live on the broker, so the group resumes where the container left off.
+Two instances sharing a group split partitions silently. When moving a consumer: retire the old Compose or docker-run container first, then apply the k3s Deployment with the same group id — offsets live on the broker, so the group resumes where the container left off. THINKBOOK's old Compose consumers are now stopped.
 
 The **gateway** has a harder conflict: under `hostNetwork` it binds the node's port 8080, which the compose gateway already holds on loopback — installing before retiring guarantees CrashLoopBackOff. Same rule, stricter: retire first, always.
 
@@ -40,4 +40,4 @@ One chart per module, no umbrella. Values files carry only non-secret config; cr
 
 Probe semantics: the gateway's `/healthz` is process-liveness only — it does not gate on Kafka reachability. Job charts instead liveness-probe **checkpoint freshness** (exec `find <dir> -mmin -2`), restoring the healthcheck parity the retired docker-run containers had.
 
-Packaging note: the module Dockerfiles bake jars into self-contained job images (the registry path); charts currently bind-mount node-local jars instead — one of the two becomes canonical when the data-group migration lands. Kubernetes `$(VAR)` expansion does **not** word-split: multi-flag JVM options must be rendered as individual argv elements (charts do), never passed as one quoted string.
+Packaging note: the module Dockerfiles bake jars into self-contained job images (the registry path); charts currently stage node-local jars from the `mlops-jars` PVC. Kubernetes `$(VAR)` expansion does **not** word-split: multi-flag JVM options must be rendered as individual argv elements (charts do), never passed as one quoted string.

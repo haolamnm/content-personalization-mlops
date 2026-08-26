@@ -60,3 +60,7 @@ RAM arithmetic makes coexistence a non-issue on the deploy box: measured idle da
 - Topic identity resets at migration: Kafka topics and the Debezium connector registration are rebuilt in-cluster (dev-tier acceptance — offsets are disposable); the idempotent PUT registration flow already scripts this.
 - Per-module CONTEXT docs gain a venue column (compose / k8s) as slices move, keeping drift visible rather than folklore.
 - New runbook(s) land at bootstrap time (successor to the deploy-thinkbook runbook covering k3s admin, kubeconfig distribution, release upgrades).
+
+## Cutover evidence (2026-08-26)
+
+The phase-edge cutover is complete on THINKBOOK. Strimzi Kafka 4.3.0, CloudNativePG PostgreSQL 18.6, charted MongoDB and MinIO, Strimzi KafkaConnect/Debezium, the gateway chart, and both Flink Deployments are healthy; PostgreSQL, MongoDB, and MinIO content was restored from captured backups. Compose data and CDC containers were stopped without deleting their named volumes. A valid gateway event reached the single Strimzi topic and produced an Iceberg commit.

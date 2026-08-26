@@ -1,0 +1,127 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaNodePool
+metadata:
+  name: mlops-kafka-nodepool
+  namespace: mlops-data
+  labels:
+    strimzi.io/cluster: mlops-kafka
+spec:
+  replicas: 1
+  roles:
+    - controller
+    - broker
+  storage:
+    type: persistent-claim
+    size: 20Gi
+    deleteClaim: false
+---
+apiVersion: kafka.strimzi.io/v1
+kind: Kafka
+metadata:
+  name: mlops-kafka
+  namespace: mlops-data
+  annotations:
+    strimzi.io/kraft: enabled
+    strimzi.io/node-pools: enabled
+spec:
+  kafka:
+    version: 4.3.0
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+    config:
+      auto.create.topics.enable: false
+      default.replication.factor: 1
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      min.insync.replicas: 1
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+---
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: events-raw
+  namespace: mlops-data
+  labels:
+    strimzi.io/cluster: mlops-kafka
+spec:
+  topicName: mlops.events.raw
+  partitions: 3
+  replicas: 1
+  config:
+    min.insync.replicas: 1
+---
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: interactions
+  namespace: mlops-data
+  labels:
+    strimzi.io/cluster: mlops-kafka
+spec:
+  topicName: mlops.public.interactions
+  partitions: 1
+  replicas: 1
+  config:
+    min.insync.replicas: 1
+---
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: connect-configs
+  namespace: mlops-data
+  labels:
+    strimzi.io/cluster: mlops-kafka
+spec:
+  topicName: cdc-connect-configs
+  partitions: 1
+  replicas: 1
+  config:
+    cleanup.policy: compact
+---
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: connect-offsets
+  namespace: mlops-data
+  labels:
+    strimzi.io/cluster: mlops-kafka
+spec:
+  topicName: cdc-connect-offsets
+  partitions: 25
+  replicas: 1
+  config:
+    cleanup.policy: compact
+---
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: connect-status
+  namespace: mlops-data
+  labels:
+    strimzi.io/cluster: mlops-kafka
+spec:
+  topicName: cdc-connect-status
+  partitions: 5
+  replicas: 1
+  config:
+    cleanup.policy: compact
+---
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: connect-schema-history
+  namespace: mlops-data
+  labels:
+    strimzi.io/cluster: mlops-kafka
+spec:
+  topicName: cdc-schema-history-postgres
+  partitions: 1
+  replicas: 1
+  config:
+    cleanup.policy: compact

@@ -70,3 +70,35 @@ gateway-health:
 
 gateway-down:
 	$(COMPOSE_GATEWAY) down
+
+K8S_DIR := platform/infra/k8s
+KUBECTL ?= kubectl
+HELM ?= helm
+
+.PHONY: k8s-validate k8s-operators k8s-data-up k8s-owned-up k8s-up
+
+k8s-validate:
+	$(KUBECTL) apply --dry-run=server -f $(K8S_DIR)/namespaces.yaml -f $(K8S_DIR)/kafka.yaml -f $(K8S_DIR)/postgres.yaml -f $(K8S_DIR)/connect.yaml -f $(K8S_DIR)/connector-postgres.yaml
+	$(HELM) template mlops-mongodb bitnami/mongodb --version 16.5.45 --namespace mlops-data -f $(K8S_DIR)/mongodb-values.yaml >/dev/null
+	$(HELM) template mlops-minio minio/minio --version 5.4.0 --namespace mlops-data -f $(K8S_DIR)/minio-values.yaml >/dev/null
+	$(HELM) template event-counts platform/streaming/event-counts/chart --namespace mlops-streaming -f $(K8S_DIR)/event-counts-values.yaml >/dev/null
+	$(HELM) template events-lake platform/streaming/events-lake/chart --namespace mlops-streaming -f $(K8S_DIR)/events-lake-values.yaml >/dev/null
+	$(HELM) template gateway platform/services/event-gateway/chart --namespace mlops-gateway -f $(K8S_DIR)/gateway-values.yaml >/dev/null
+
+k8s-operators:
+	$(KUBECTL) apply -f $(K8S_DIR)/namespaces.yaml
+	$(HELM) upgrade --install strimzi oci://quay.io/strimzi-helm/strimzi-kafka-operator --version 1.1.0 --namespace strimzi-system --create-namespace --set 'watchNamespaces[0]=mlops-data' --wait
+	$(HELM) upgrade --install cnpg cnpg/cloudnative-pg --version 0.29.0 --namespace cnpg-system --create-namespace --wait
+
+k8s-data-up: k8s-operators
+	$(KUBECTL) apply -f $(K8S_DIR)/kafka.yaml -f $(K8S_DIR)/postgres.yaml
+	$(HELM) upgrade --install mlops-mongodb bitnami/mongodb --version 16.5.45 --namespace mlops-data -f $(K8S_DIR)/mongodb-values.yaml --wait
+	$(HELM) upgrade --install mlops-minio minio/minio --version 5.4.0 --namespace mlops-data -f $(K8S_DIR)/minio-values.yaml --wait
+	$(KUBECTL) apply -f $(K8S_DIR)/connect.yaml -f $(K8S_DIR)/connector-postgres.yaml
+
+k8s-owned-up: k8s-data-up
+	$(HELM) template event-counts platform/streaming/event-counts/chart --namespace mlops-streaming -f $(K8S_DIR)/event-counts-values.yaml | $(KUBECTL) apply -f -
+	$(HELM) template events-lake platform/streaming/events-lake/chart --namespace mlops-streaming -f $(K8S_DIR)/events-lake-values.yaml | $(KUBECTL) apply -f -
+	$(HELM) template gateway platform/services/event-gateway/chart --namespace mlops-gateway -f $(K8S_DIR)/gateway-values.yaml | $(KUBECTL) apply -f -
+
+k8s-up: k8s-owned-up

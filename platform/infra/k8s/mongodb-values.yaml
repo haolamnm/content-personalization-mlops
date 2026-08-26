@@ -1,0 +1,17 @@
+architecture: standalone
+useStatefulSet: true
+auth:
+  enabled: true
+  rootUser: mlops
+  existingSecret: mongodb-auth
+image:
+  repository: bitnamilegacy/mongodb
+  tag: 8.0.13-debian-12-r0
+extraEnvVars:
+  - name: GLIBC_TUNABLES
+    value: glibc.pthread.rseq=1
+persistence:
+  enabled: true
+  resourcePolicy: keep
+  storageClass: local-path
+  size: 10Gi

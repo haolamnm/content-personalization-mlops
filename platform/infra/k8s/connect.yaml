@@ -1,0 +1,49 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaConnect
+metadata:
+  name: mlops-connect
+  namespace: mlops-data
+  annotations:
+    strimzi.io/use-connector-resources: "true"
+spec:
+  version: 4.3.0
+  replicas: 1
+  image: mlops/debezium-connect:k8s
+  bootstrapServers: mlops-kafka-kafka-bootstrap:9092
+  groupId: "1"
+  configStorageTopic: cdc-connect-configs
+  offsetStorageTopic: cdc-connect-offsets
+  statusStorageTopic: cdc-connect-status
+  config:
+    config.storage.replication.factor: 1
+    offset.storage.replication.factor: 1
+    status.storage.replication.factor: 1
+    offset.storage.partitions: 25
+    status.storage.partitions: 5
+    config.providers: secrets
+    config.providers.secrets.class: io.strimzi.kafka.KubernetesSecretConfigProvider
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mlops-connect-secret-reader
+  namespace: mlops-data
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["mlops-postgres-app"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mlops-connect-secret-reader
+  namespace: mlops-data
+subjects:
+  - kind: ServiceAccount
+    name: mlops-connect-connect
+    namespace: mlops-data
+roleRef:
+  kind: Role
+  name: mlops-connect-secret-reader
+  apiGroup: rbac.authorization.k8s.io

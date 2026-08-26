@@ -13,6 +13,10 @@ related:
 
 Durable documentation for the Zero→Hero workspace. Learning-in-progress material stays in `.notes/` (local-only); everything publishable lives here. Machine catalogs: [`index.json`](./index.json) is generated — regenerate after doc changes (`python3 scripts/gen_docs_metadata.py`), never hand-edit.
 
+## Platform Vision
+
+- [`agents/architecture/`](./agents/architecture/): routed architecture docs; start with its generated [`index.json`](./agents/architecture/index.json).
+
 ## Architecture Decision Records (`docs/adr/`)
 
 Binding decisions with alternatives; newest supersedes oldest explicitly. Catalog: [`adr/index.json`](./adr/index.json) (generated).
@@ -22,10 +26,13 @@ Binding decisions with alternatives; newest supersedes oldest explicitly. Catalo
 - [`0003-ram-budgeted-local-infrastructure.md`](./adr/0003-ram-budgeted-local-infrastructure.md): RAM reality — compose profile groups, one at a time.
 - [`0004-polyglot-language-per-concern.md`](./adr/0004-polyglot-language-per-concern.md): Java 25 / Python 3.14 / Go 1.27 / Rust 1.98 / TS+SvelteKit ownership map.
 - [`0005-sveltekit-over-nextjs.md`](./adr/0005-sveltekit-over-nextjs.md): optimized FE choice with rejected alternatives.
+- [`0006-thinkbook-remote-deployment-target.md`](./adr/0006-thinkbook-remote-deployment-target.md): remote deployment target and port policy.
+- [`0007-kubernetes-adoption-k3s-helm.md`](./adr/0007-kubernetes-adoption-k3s-helm.md): k3s and Helm adoption at the phase boundary.
+- [`0008-iceberg-lake-sink-dual-pin.md`](./adr/0008-iceberg-lake-sink-dual-pin.md): Iceberg sink compatibility pins.
 
 ## Research & Decision Log (`docs/agents/`)
 
-Agent docs: [`agents/README.md`](./agents/README.md) (knowledge / runbooks / experiments map). Catalog (research notes use `NNNN-slug.md`, landing as Phase 0 study output): [`agents/index.json`](./agents/index.json) (generated).
+Agent docs: [`agents/README.md`](./agents/README.md) (knowledge / runbooks / experiments / architecture map). Catalog (research notes use `NNNN-slug.md`, landing as Phase 0 study output): [`agents/index.json`](./agents/index.json) (generated).
 
 ## Agent Layer
 

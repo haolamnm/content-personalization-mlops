@@ -2,11 +2,11 @@
 
 > **Learn every layer by building it.** One theme — content personalization — carried from first event to a production-grade platform.
 
-A workspace where an MLOps platform is built from zero: user interactions flow through Debezium CDC → Kafka → Java stream jobs (Flink + Kafka Streams) → MinIO/Iceberg lakehouse → Feast features (offline Iceberg, online Redis) → Ray Train + MLflow → FastAPI/Ray Serve models behind a Rust retrieval hot path → Go BFF → SvelteKit app — observed end-to-end (OpenTelemetry/SigNoz, Prometheus/Grafana) and analyzed in Superset.
+A workspace where an MLOps platform is built from zero: user interactions flow through Debezium CDC → Kafka → Java stream jobs (Flink + Kafka Streams) → MinIO/Iceberg lakehouse → Feast features (offline Iceberg, online Redis) → Ray Train + MLflow → FastAPI/Ray Serve models behind a Rust retrieval hot path → Go BFF → SvelteKit app — observed end-to-end (OpenTelemetry/SigNoz, Prometheus/Grafana) and analyzed in Superset. The full north-star architecture is documented in [`docs/agents/architecture/north-star.md`](docs/agents/architecture/north-star.md).
 
 ## Status
 
-Phase 0 of 9 (phases 0–8; foundations): architecture decisions locked ([`docs/adr/`](docs/adr/)), toolchains installed, reference implementation under study. No runtime code yet — the build lands in `platform/` from Phase 1.
+Phase 1 of 9 (phases 0–8; data foundation): architecture decisions are locked, and the first runtime slice is implemented in `platform/` — PostgreSQL, MongoDB, Kafka, Debezium, MinIO, the Go event gateway, and Java streaming jobs. The THINKBOOK k3s cutover is complete; feature, training, serving, app, observability, and analytics remain reserved for later phases.
 
 ## Polyglot by concern
 
@@ -29,5 +29,7 @@ Rationale and rejected alternatives per language: [ADR 0004](docs/adr/0004-polyg
 
 ## Documentation
 
+- Architecture index: [`docs/agents/architecture/index.json`](docs/agents/architecture/index.json)
+- North star: [`docs/agents/architecture/north-star.md`](docs/agents/architecture/north-star.md)
 - ADRs: [`docs/adr/index.json`](docs/adr/index.json) · Decision log: [`docs/agents/decision-log.md`](docs/agents/decision-log.md)
 - Full catalog: [`docs/index.json`](docs/index.json)

@@ -68,6 +68,10 @@ k3s embeds its own containerd — **images built/pulled by Docker are invisible 
 
 Avoid `:latest` tags — its default `imagePullPolicy: Always` defeats locally imported images.
 
+## Data-plane cutover
+
+The standing data-plane assets live in [`platform/infra/k8s/`](../../../platform/infra/k8s/README.md). Apply the operator resources before the owned-service values, restore the captured data before stopping Compose, and preserve the old named volumes as rollback evidence. The final gate is one Strimzi Kafka cluster, one Strimzi KafkaConnect/Debezium connector, healthy CNPG/MongoDB/MinIO, and zero `data-*` or `cdc-connect` containers on THINKBOOK.
+
 ## Verification habits
 
 - Node + workload health: `kubectl get nodes`, `kubectl get pods -A`

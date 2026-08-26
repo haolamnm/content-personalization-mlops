@@ -8,12 +8,18 @@ tags: [flink, streaming, watermarks, checkpoints]
 related:
   - ../knowledge/image-pins.md
   - ../../../platform/streaming/event-counts/README.md
+  - ../../../platform/streaming/events-lake/README.md
+  - ../../adr/0008-iceberg-lake-sink-dual-pin.md
   - ../../../.agents/rules/java-streaming-correctness.md
 ---
 
 # Flink Streaming
 
-Operational knowledge from the first job (`platform/streaming/event-counts`); module README carries the binding knobs.
+Operational knowledge from the streaming jobs (`platform/streaming/event-counts`, `platform/streaming/events-lake`); module READMEs carry the binding knobs.
+
+## Version pins are per-module (dual pin)
+
+The two jobs intentionally run different Flink majors: event-counts on **2.2.1**, events-lake on **2.1.3** — because `iceberg-flink-runtime` ships per-major jars and Iceberg 1.11.0 has no `-2.2` build yet ([ADR 0008](../../adr/0008-iceberg-lake-sink-dual-pin.md)). Separate containers share no classpath, so this is safe. Collapse back to one version when Iceberg 1.12.0 lands; until then, connector bumps must be checked per module against their own major.
 
 ## Embedded runtime constraint
 
@@ -31,3 +37,6 @@ Punctuated per-record emission (running max − bound) over periodic emitters: d
 - Kafka connector 5.x commits offsets on checkpoints automatically; the old builder knob is gone.
 - Sink V2 writers implement `write/flush/close` — no `prepareCommit`; `SinkFunction` is removed entirely.
 - JDK 25 runs Flink fine with `--add-opens` for java.base packages (lang/util/io/net/nio + sun.nio.ch); same set goes in surefire argLine.
+- Iceberg's flink runtime assumes `flink-table-common`, `flink-table-runtime`, and hadoop are **provided**; embedded fat jars declare all three compile-scope. Hadoop-common drags `slf4j-reload4j`/`log4j` in — exclude them or the second SLF4J binding hijacks logging.
+- Shading hadoop-common also merges dnsjava's service entry whose classes live only under `META-INF/versions/18/` — the shade manifest must set `Multi-Release: true` or JDK startup dies with `ServiceConfigurationError: InetAddressResolverProvider`.
+- RowData/TimestampData live in `flink-table-common`; internal timestamp representation is millisecond + nano-of-milli — use `TimestampData.fromInstant(...)` / `.toInstant()` for lossless round-trips; `fromEpochMillis` silently truncates sub-millisecond precision.

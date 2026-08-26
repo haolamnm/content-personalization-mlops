@@ -25,12 +25,16 @@ Pins are registry-verified at adoption, never from memory. Compose files carry t
 
 ## Streaming
 
+Per-module pins ([ADR 0008](../../adr/0008-iceberg-lake-sink-dual-pin.md)): the two jobs run different Flink majors because `iceberg-flink-runtime` ships per-major jars.
+
 | Artifact | Pin | Why |
 |:---|:---|:---|
-| Flink | 2.2.1 | newest minor with a matching Kafka connector build (see below) |
-| `flink-connector-kafka` | 5.0.0-2.2 | connector releases track specific Flink minors; no `-2.3` existed at adoption — matched pair, no drift (review-blocking per java rules) |
-| Kafka clients | 4.2.x (transitive) | compatible with broker 4.3.1 |
-| Runtime image | `eclipse-temurin:25-jre`, digest `sha256:f9e65324a37f2…` verified | JDK 25 LTS per ADR 0004 |
+| Flink (event-counts) | 2.2.1 | newest minor with a matching Kafka connector build (see below) |
+| Flink (events-lake) | 2.1.3 | newest patch of the 2.1 line — the latest Iceberg-supported major at adoption |
+| `flink-connector-kafka` (event-counts / events-lake) | 5.0.0-2.2 / 5.0.0-2.1 | connector releases track specific Flink minors; matched pairs, no drift (review-blocking per java rules) |
+| Kafka clients | 4.2.x (transitive, both) | compatible with broker 4.3.1 |
+| iceberg-flink-runtime-2.1 + aws-bundle (events-lake) | 1.11.0 | latest release; no `-2.2` runtime exists yet — **trigger**: bump both jobs to one version when 1.12.0 ships |
+| Runtime image | `eclipse-temurin:25-jre`, digest `sha256:f9e65324a37f28209ce7dd0e5149a7aa954520ed936fb87813cf6ded2400a112` verified | JDK 25 LTS per ADR 0004; both streaming jars |
 
 ## CDC
 

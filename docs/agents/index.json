@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generator": "scripts/gen_docs_metadata.py",
-  "count": 12,
+  "count": 23,
   "docs": [
     {
       "path": "docs/agents/README.md",
@@ -16,6 +16,220 @@
       ],
       "related": [
         "../README.md"
+      ]
+    },
+    {
+      "path": "docs/agents/architecture/README.md",
+      "id": "agents-architecture-map",
+      "title": "Architecture Design Index",
+      "type": "guide",
+      "status": "active",
+      "date": "2026-08-26",
+      "tags": [
+        "architecture",
+        "design"
+      ],
+      "related": [
+        "../README.md",
+        "./index.json",
+        "./north-star.md"
+      ]
+    },
+    {
+      "path": "docs/agents/architecture/data-platform.md",
+      "id": "architecture-data-platform",
+      "title": "Data Platform Design — Sources, Contracts, and Lakehouse",
+      "type": "architecture",
+      "status": "draft",
+      "date": "2026-08-26",
+      "tags": [
+        "architecture",
+        "data",
+        "postgres",
+        "kafka",
+        "iceberg"
+      ],
+      "related": [
+        "./system-flow.md",
+        "./domain-contracts.md",
+        "./messaging.md",
+        "./decision-gates.md"
+      ]
+    },
+    {
+      "path": "docs/agents/architecture/decision-gates.md",
+      "id": "architecture-decision-gates",
+      "title": "Decision Gates — From Candidate to ADR",
+      "type": "standard",
+      "status": "active",
+      "date": "2026-08-26",
+      "tags": [
+        "architecture",
+        "decisions",
+        "evidence",
+        "adr"
+      ],
+      "related": [
+        "./service-radar.md",
+        "./production-bar.md",
+        "../../adr/index.json"
+      ]
+    },
+    {
+      "path": "docs/agents/architecture/domain-contracts.md",
+      "id": "architecture-domain-contracts",
+      "title": "Domain Contracts — Vocabulary and Service Seams",
+      "type": "contract",
+      "status": "active",
+      "date": "2026-08-26",
+      "tags": [
+        "architecture",
+        "contracts",
+        "domain-modeling"
+      ],
+      "related": [
+        "./north-star.md",
+        "./system-flow.md",
+        "../../../CONTEXT-MAP.md"
+      ]
+    },
+    {
+      "path": "docs/agents/architecture/messaging.md",
+      "id": "architecture-messaging",
+      "title": "Messaging Design — Facts, Commands, and Workflows",
+      "type": "comparison",
+      "status": "draft",
+      "date": "2026-08-26",
+      "tags": [
+        "architecture",
+        "messaging",
+        "kafka",
+        "rabbitmq",
+        "temporal"
+      ],
+      "related": [
+        "./system-flow.md",
+        "./domain-contracts.md",
+        "./decision-gates.md"
+      ]
+    },
+    {
+      "path": "docs/agents/architecture/ml-platform.md",
+      "id": "architecture-ml-platform",
+      "title": "ML Platform Design — Features, Workflows, and Serving",
+      "type": "architecture",
+      "status": "draft",
+      "date": "2026-08-26",
+      "tags": [
+        "architecture",
+        "mlops",
+        "features",
+        "serving"
+      ],
+      "related": [
+        "./system-flow.md",
+        "./domain-contracts.md",
+        "./messaging.md",
+        "./production-bar.md"
+      ]
+    },
+    {
+      "path": "docs/agents/architecture/north-star.md",
+      "id": "architecture-north-star",
+      "title": "North Star — Content Personalization Platform",
+      "type": "vision",
+      "status": "active",
+      "date": "2026-08-26",
+      "tags": [
+        "architecture",
+        "vision",
+        "content-personalization"
+      ],
+      "related": [
+        "./system-flow.md",
+        "./domain-contracts.md",
+        "./production-bar.md",
+        "../../../CONTEXT-MAP.md"
+      ]
+    },
+    {
+      "path": "docs/agents/architecture/operations.md",
+      "id": "architecture-operations",
+      "title": "Operations Design — Kubernetes, Scale, Security, and Observability",
+      "type": "architecture",
+      "status": "draft",
+      "date": "2026-08-26",
+      "tags": [
+        "architecture",
+        "kubernetes",
+        "operations",
+        "observability"
+      ],
+      "related": [
+        "./system-flow.md",
+        "./production-bar.md",
+        "./decision-gates.md",
+        "../../adr/0003-ram-budgeted-local-infrastructure.md",
+        "../../adr/0007-kubernetes-adoption-k3s-helm.md"
+      ]
+    },
+    {
+      "path": "docs/agents/architecture/production-bar.md",
+      "id": "architecture-production-bar",
+      "title": "Production Bar — Evidence and Failure Behavior",
+      "type": "standard",
+      "status": "active",
+      "date": "2026-08-26",
+      "tags": [
+        "architecture",
+        "reliability",
+        "quality",
+        "verification"
+      ],
+      "related": [
+        "./north-star.md",
+        "./domain-contracts.md",
+        "./decision-gates.md"
+      ]
+    },
+    {
+      "path": "docs/agents/architecture/service-radar.md",
+      "id": "architecture-service-radar",
+      "title": "Service Radar — Architecture Routing Map",
+      "type": "index",
+      "status": "active",
+      "date": "2026-08-26",
+      "tags": [
+        "architecture",
+        "services",
+        "routing"
+      ],
+      "related": [
+        "./index.json",
+        "./north-star.md",
+        "./decision-gates.md"
+      ]
+    },
+    {
+      "path": "docs/agents/architecture/system-flow.md",
+      "id": "architecture-system-flow",
+      "title": "System Flow — Runtime and Data Movement",
+      "type": "architecture",
+      "status": "active",
+      "date": "2026-08-26",
+      "tags": [
+        "architecture",
+        "flow",
+        "data",
+        "runtime"
+      ],
+      "related": [
+        "./north-star.md",
+        "./domain-contracts.md",
+        "./messaging.md",
+        "./data-platform.md",
+        "./ml-platform.md",
+        "./operations.md"
       ]
     },
     {

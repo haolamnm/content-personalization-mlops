@@ -53,6 +53,9 @@ func (item ContentItem) Validate() error {
 	if strings.TrimSpace(item.Title) == "" {
 		problems = append(problems, "title is required")
 	}
+	if item.PublishedAt.IsZero() {
+		problems = append(problems, "published_at is required")
+	}
 	if item.Status != StatusActive && item.Status != StatusArchived {
 		problems = append(problems, "status must be active or archived")
 	}

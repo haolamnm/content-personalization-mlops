@@ -30,6 +30,7 @@ func TestContentItemValidate(t *testing.T) {
 		{name: "padded id", item: func() ContentItem { item := valid; item.ID = " article-001 "; return item }(), wantErr: "id must not have surrounding whitespace"},
 		{name: "unknown kind", item: func() ContentItem { item := valid; item.Kind = "podcast"; return item }(), wantErr: "kind must be"},
 		{name: "missing title", item: func() ContentItem { item := valid; item.Title = ""; return item }(), wantErr: "title is required"},
+		{name: "missing published at", item: func() ContentItem { item := valid; item.PublishedAt = time.Time{}; return item }(), wantErr: "published_at is required"},
 		{name: "unknown status", item: func() ContentItem { item := valid; item.Status = "draft"; return item }(), wantErr: "status must be"},
 		{name: "updated before created", item: func() ContentItem { item := valid; item.UpdatedAt = item.CreatedAt.Add(-time.Second); return item }(), wantErr: "updated_at must not precede created_at"},
 	}

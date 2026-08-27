@@ -76,7 +76,13 @@ K8S_DIR := platform/infra/k8s
 KUBECTL ?= kubectl
 HELM ?= helm
 
-.PHONY: features-test features-lint k8s-validate k8s-operators k8s-data-up k8s-owned-up k8s-up
+.PHONY: catalog-test catalog-lint features-test features-lint k8s-validate k8s-operators k8s-mongodb-migrate k8s-data-up k8s-owned-up k8s-up
+
+catalog-test:
+	go -C platform/services/content-catalog test ./...
+
+catalog-lint:
+	test -z "$$(gofmt -l platform/services/content-catalog)" && go -C platform/services/content-catalog vet ./...
 
 features-test:
 	uv run --directory platform/features pytest -q
@@ -87,7 +93,7 @@ features-lint:
 	uv run --directory platform/features basedpyright src tests feature_repo
 
 k8s-validate:
-	$(KUBECTL) apply --dry-run=server -f $(K8S_DIR)/namespaces.yaml -f $(K8S_DIR)/kafka.yaml -f $(K8S_DIR)/postgres.yaml -f $(K8S_DIR)/connect.yaml -f $(K8S_DIR)/connector-postgres.yaml
+	$(KUBECTL) apply --dry-run=server -f $(K8S_DIR)/namespaces.yaml -f $(K8S_DIR)/kafka.yaml -f $(K8S_DIR)/postgres.yaml -f $(K8S_DIR)/connect.yaml -f $(K8S_DIR)/connector-postgres.yaml -f $(K8S_DIR)/connector-mongodb.yaml
 	$(HELM) template mlops-mongodb bitnami/mongodb --version 16.5.45 --namespace mlops-data -f $(K8S_DIR)/mongodb-values.yaml >/dev/null
 	$(HELM) template mlops-minio minio/minio --version 5.4.0 --namespace mlops-data -f $(K8S_DIR)/minio-values.yaml >/dev/null
 	$(HELM) template mlops-redis bitnami/redis --version 28.0.10 --namespace mlops-data -f $(K8S_DIR)/redis-values.yaml >/dev/null
@@ -100,12 +106,25 @@ k8s-operators:
 	$(HELM) upgrade --install strimzi oci://quay.io/strimzi-helm/strimzi-kafka-operator --version 1.1.0 --namespace strimzi-system --create-namespace --set 'watchNamespaces[0]=mlops-data' --wait
 	$(HELM) upgrade --install cnpg cnpg/cloudnative-pg --version 0.29.0 --namespace cnpg-system --create-namespace --wait
 
-k8s-data-up: k8s-operators
+k8s-mongodb-migrate: k8s-operators
+	@set -eu; \
+	existing_service="$$($(KUBECTL) get statefulset mlops-mongodb -n mlops-data -o jsonpath='{.spec.serviceName}' 2>/dev/null || true)"; \
+	case "$$existing_service" in \
+		"") echo "MongoDB StatefulSet absent; no migration needed" ;; \
+		mlops-mongodb-headless) echo "MongoDB already uses the replica-set service" ;; \
+		mlops-mongodb) echo "Migrating MongoDB StatefulSet service without touching its PVC"; \
+			$(KUBECTL) delete statefulset mlops-mongodb -n mlops-data --cascade=orphan; \
+			$(KUBECTL) delete pod mlops-mongodb-0 -n mlops-data --ignore-not-found; \
+			;; \
+		*) echo "unsupported MongoDB StatefulSet serviceName: $$existing_service" >&2; exit 1 ;; \
+	esac
+
+k8s-data-up: k8s-operators k8s-mongodb-migrate
 	$(KUBECTL) apply -f $(K8S_DIR)/kafka.yaml -f $(K8S_DIR)/postgres.yaml
 	$(HELM) upgrade --install mlops-mongodb bitnami/mongodb --version 16.5.45 --namespace mlops-data -f $(K8S_DIR)/mongodb-values.yaml --wait
 	$(HELM) upgrade --install mlops-minio minio/minio --version 5.4.0 --namespace mlops-data -f $(K8S_DIR)/minio-values.yaml --wait
 	$(HELM) upgrade --install mlops-redis bitnami/redis --version 28.0.10 --namespace mlops-data -f $(K8S_DIR)/redis-values.yaml --wait
-	$(KUBECTL) apply -f $(K8S_DIR)/connect.yaml -f $(K8S_DIR)/connector-postgres.yaml
+	$(KUBECTL) apply -f $(K8S_DIR)/connect.yaml -f $(K8S_DIR)/connector-postgres.yaml -f $(K8S_DIR)/connector-mongodb.yaml
 
 k8s-owned-up: k8s-data-up
 	$(HELM) template event-counts platform/streaming/event-counts/chart --namespace mlops-streaming -f $(K8S_DIR)/event-counts-values.yaml | $(KUBECTL) apply -f -

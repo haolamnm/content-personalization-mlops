@@ -1,0 +1,19 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaConnector
+metadata:
+  name: mongodb-source
+  namespace: mlops-data
+  labels:
+    strimzi.io/cluster: mlops-connect
+spec:
+  class: io.debezium.connector.mongodb.MongoDbConnector
+  tasksMax: 1
+  config:
+    mongodb.connection.string: mongodb://mlops-mongodb-0.mlops-mongodb-headless.mlops-data.svc.cluster.local:27017/?replicaSet=rs0
+    mongodb.user: mlops
+    mongodb.password: ${secrets:mlops-data/mongodb-auth:mongodb-root-password}
+    mongodb.authsource: admin
+    topic.prefix: mlops_mongodb
+    database.include.list: mlops_catalog
+    collection.include.list: mlops_catalog.content_items
+    snapshot.mode: initial

@@ -7,15 +7,15 @@ status: active
 tags: [flink, streaming, watermarks, checkpoints]
 related:
   - ../knowledge/image-pins.md
-  - ../../../platform/streaming/event-counts/README.md
-  - ../../../platform/streaming/events-lake/README.md
+  - ../../../platform/streaming/event-counts/AGENTS.md
+  - ../../../platform/streaming/events-lake/AGENTS.md
   - ../../adr/0008-iceberg-lake-sink-dual-pin.md
   - ../../../.agents/rules/java-streaming-correctness.md
 ---
 
 # Flink Streaming
 
-Operational knowledge from the streaming jobs (`platform/streaming/event-counts`, `platform/streaming/events-lake`); module READMEs carry the binding knobs.
+Operational knowledge from the streaming jobs (`platform/streaming/event-counts`, `platform/streaming/events-lake`); module AGENTS.md files carry the binding knobs.
 
 ## Version pins are per-module (dual pin)
 

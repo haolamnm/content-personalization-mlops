@@ -24,7 +24,7 @@ Rationale and rejected alternatives per language: [ADR 0004](docs/adr/0004-polyg
 
 - [`AGENTS.md`](AGENTS.md) — how agents work here: instruction hierarchy, rules, skills, verification gates
 - [`CONTEXT-MAP.md`](CONTEXT-MAP.md) — pipeline bounded contexts and ubiquitous language
-- [`docs/README.md`](docs/README.md) — documentation hub (ADRs, decision log, generated catalogs)
+- [`docs/AGENTS.md`](docs/AGENTS.md) — documentation hub (ADRs, decision log, generated catalogs)
 - `.notes/`, `.repos/`, `.worklog/` — local-only learning material, reference clones, session state (gitignored by design)
 
 ## Documentation

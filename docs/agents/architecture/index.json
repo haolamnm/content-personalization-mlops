@@ -4,7 +4,7 @@
   "count": 11,
   "docs": [
     {
-      "path": "docs/agents/architecture/README.md",
+      "path": "docs/agents/architecture/AGENTS.md",
       "id": "agents-architecture-map",
       "title": "Architecture Design Index",
       "type": "guide",
@@ -15,7 +15,7 @@
         "design"
       ],
       "related": [
-        "../README.md",
+        "../AGENTS.md",
         "./index.json",
         "./north-star.md"
       ]

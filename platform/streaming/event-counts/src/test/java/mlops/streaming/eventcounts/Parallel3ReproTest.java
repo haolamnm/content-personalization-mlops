@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
  * Disabled so gates stay green; keep as the reproduction recipe for an upstream report
  * and re-enable after upgrading Flink or moving to a real cluster.
  */
-@org.junit.jupiter.api.Disabled("known embedded-mode constraint, see README")
+@org.junit.jupiter.api.Disabled("known embedded-mode constraint, see AGENTS.md")
 class Parallel3ReproTest {
 
     private static final List<String> COLLECTED = new java.util.concurrent.CopyOnWriteArrayList<>();

@@ -11,6 +11,10 @@ KafkaSource → parse → map to Flink internal rows → IcebergSink. No windows
 - Table bootstrap is idempotent: namespace and table are created on first run if missing
 - Partitioned by `day(created_at)`; Parquet files target 128 MiB
 
+## Resilience
+
+`EventsLakeJob.configureCheckpoints` enables a 10-second checkpoint interval with `enableCheckpointing(10_000L)` and tolerates three checkpoint failures through `setTolerableCheckpointFailureNumber(3)`.
+
 ## Dual pin (read this before bumping versions)
 
 | Artifact | Version | Why |
@@ -51,7 +55,7 @@ docker run -d --name flink-events-lake --network mlops-data \
   -e PG_JDBC_URL=jdbc:postgresql://postgres:5432/mlops \
   -e MINIO_S3_ENDPOINT=http://minio:9000 \
   --env-file .env \
-  eclipse-temurin:25-jre java --add-opens=java.base/java.lang=ALL-UNNAMED \
+  eclipse-temurin:25-jre@sha256:f9e65324a37f28209ce7dd0e5149a7aa954520ed936fb87813cf6ded2400a112 java --add-opens=java.base/java.lang=ALL-UNNAMED \
     --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED \
     --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED \
     --add-opens=java.base/sun.nio.ch=ALL-UNNAMED \

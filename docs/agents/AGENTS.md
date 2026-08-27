@@ -6,7 +6,7 @@ type: guide
 status: active
 tags: [docs, layout]
 related:
-  - ../README.md
+  - ../AGENTS.md
 ---
 
 # `docs/agents/` — what lives where

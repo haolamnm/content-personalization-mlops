@@ -6,7 +6,7 @@ type: guide
 status: active
 tags: [architecture, design]
 related:
-  - ../README.md
+  - ../AGENTS.md
   - ./index.json
   - ./north-star.md
 ---

@@ -49,9 +49,9 @@ The user sees a fast, useful feed; the platform owns capture, processing, histor
 
 ## Current boundary
 
-The documented implemented slice is the Phase 1 data foundation: PostgreSQL, MongoDB, Kafka, MinIO, Debezium CDC, the Go event gateway, the `event-counts` Flink job, and the `events-lake` Iceberg sink.
+The documented implemented slice is the Phase 1 data foundation plus the Phase 2 Feature Platform and Content Catalog seams: PostgreSQL, MongoDB, Kafka, MinIO, Debezium CDC, the Go event gateway, the `event-counts` Flink job, the `events-lake` Iceberg sink, Feast/Redis interaction features, and the MongoDB-backed canonical content-item reader.
 
-Feature serving, training, model serving, retrieval, the BFF, the app, observability, analytics, and the production Kubernetes cutover remain target work; this document does not claim they already run.
+Training, model serving, retrieval, the BFF, the app, observability, and analytics remain target work; the THINKBOOK k3s data-plane cutover is complete, while production-grade deployment hardening remains target work.
 
 ## Read next
 

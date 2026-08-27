@@ -73,6 +73,21 @@ spec:
 apiVersion: kafka.strimzi.io/v1
 kind: KafkaTopic
 metadata:
+  name: content-items
+  namespace: mlops-data
+  labels:
+    strimzi.io/cluster: mlops-kafka
+spec:
+  topicName: mlops_mongodb.mlops_catalog.content_items
+  partitions: 3
+  replicas: 1
+  config:
+    cleanup.policy: compact
+    min.insync.replicas: 1
+---
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
   name: connect-configs
   namespace: mlops-data
   labels:

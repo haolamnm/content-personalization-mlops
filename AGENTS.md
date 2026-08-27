@@ -147,7 +147,7 @@ Before declaring any task complete:
 | `AGENTS.local.md` | Machine rules (this Mac) — facts live in `.computers/MACBOOK.md` | ignored |
 | `.computers/` | Per-box machine facts: MACBOOK (authoring), THINKBOOK (deploy target), WORKSTATION (out of scope) | ignored |
 | `.agents/rules/`, `.agents/skills/` | Operational rules + phase skills | tracked |
-| `docs/adr/`, `docs/agents/`, `docs/README.md` | Decision records + research log | tracked |
+| `docs/adr/`, `docs/agents/`, `docs/AGENTS.md` | Decision records + research log | tracked |
 | `platform/**/CONTEXT.md` | Per-module context docs, beside their code (created with modules) | tracked once created |
 | `scripts/` | Generators + curated registries (tracked); outputs may be local | tracked |
 | `.notes/` | Learning notes (roadmap, topic walkthroughs) | ignored |

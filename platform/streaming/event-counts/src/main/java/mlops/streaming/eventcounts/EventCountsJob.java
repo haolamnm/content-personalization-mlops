@@ -30,7 +30,7 @@ import org.apache.flink.util.OutputTag;
  * tumbling windows. Too-late events are side-output, never dropped silently.
  *
  * <p>Runs embedded (LocalStreamEnvironment) via {@code java -jar}; checkpoint storage is a local
- * dev directory — durable state backend comes with the deployment design (see README).
+ * dev directory — durable state backend comes with the deployment design (see AGENTS.md).
  */
 public final class EventCountsJob {
 
@@ -126,7 +126,7 @@ public final class EventCountsJob {
     }
 
     static void configureCheckpoints(StreamExecutionEnvironment env) {
-        // interval + tolerance are the documented resilience knobs — see README
+        // interval + tolerance are the documented resilience knobs — see AGENTS.md
         env.enableCheckpointing(10_000L);
         var cfg = env.getCheckpointConfig();
         cfg.setCheckpointingConsistencyMode(CheckpointingMode.EXACTLY_ONCE);
@@ -135,12 +135,12 @@ public final class EventCountsJob {
         cfg.setTolerableCheckpointFailureNumber(3);
     }
 
-    /** Environment configuration: dev checkpoint storage is a local directory (see README). */
+    /** Environment configuration: dev checkpoint storage is a local directory (see AGENTS.md). */
     static Configuration envConfig() {
         var config = new Configuration();
         // Embedded LocalStreamEnvironment at parallelism>1 never fires event-time windows:
         // watermarks are emitted upstream but the window operator's valve never releases
-        // (reproduced in-process, see README "Known constraint"). Real clusters are unaffected;
+        // (reproduced in-process, see AGENTS.md "Known constraint"). Real clusters are unaffected;
         // revisit parallelism with the deployment-shape ADR. Override locally: -Dflink.parallelism=N
         config.set(CoreOptions.DEFAULT_PARALLELISM, Integer.getInteger("flink.parallelism", 1));
         config.set(PipelineOptions.AUTO_WATERMARK_INTERVAL, Duration.ofMillis(200));

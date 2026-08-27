@@ -19,6 +19,8 @@ graph LR
   BFF --> RT[Retrieval/Rank · Rust]
   RT --> OS[(Online Store · Redis)]
   PG[(PostgreSQL)] -- Debezium CDC --> K
+  CAT[Content Catalog · Go] --> MDB[(MongoDB)]
+  MDB -- Debezium CDC --> K
   K --> ST[Stream Jobs · Flink/KStreams]
   ST --> LH[(Lakehouse · MinIO + Iceberg)]
   K -- sink --> ES[(Elasticsearch)]
@@ -39,10 +41,11 @@ graph LR
 | Bounded Context | Scope & Responsibility | Language | Home | Status |
 |:---|:---|:---|:---|:---|
 | **Event Gateway** | Ingest impressions/clicks/dwells at the edge; validate against schema; produce to Kafka; back-pressure + rate limits | Go | `platform/services/event-gateway` | live on THINKBOOK |
-| **CDC** | Postgres change-data-capture into Kafka topics | Debezium (config) | `platform/infra/cdc` | live on THINKBOOK via Strimzi KafkaConnect; MongoDB CDC reserved |
+| **CDC** | PostgreSQL and MongoDB change-data-capture into Kafka topics | Debezium (config) | `platform/infra/cdc` | live on THINKBOOK via Strimzi KafkaConnect |
 | **Stream Processing** | Validate, enrich, aggregate event streams; write to lakehouse; one Kafka Streams service for lightweight enrichment | Java (Flink job + one KStreams svc) | `platform/streaming` | live on THINKBOOK k3s (embedded, parallelism 1) |
 | **Lakehouse** | MinIO objects + Iceberg tables: bronze/silver/gold events | SQL + engine-managed | `platform/lakehouse` | raw Iceberg landing live on k3s; bronze/silver/gold reserved |
 | **Feature Platform** | Feast registry; independent user/item Iceberg-to-Parquet views; Dask point-in-time joins; seven-day Redis online keys | Python | `platform/features` | implemented; live-proven against k3s stores |
+| **Content Catalog** | Canonical recommendable content-item documents and active reads | Go + MongoDB | `platform/services/content-catalog` | implemented; MongoDB reads and CDC live-proven on k3s |
 | **Training** | Ray Train/Tune pipelines, experiment tracking, model promotion | Python | `platform/training` | reserved |
 | **Serving** | Model inference behind FastAPI/Ray Serve; candidate generation inputs | Python | `platform/serving` | reserved |
 | **Retrieval/Rank hot path** | Candidate fetch from Redis/Elasticsearch, feature-vector join, light scoring under strict tail-latency budget | Rust | `platform/services/retrieval` | reserved |
@@ -62,7 +65,7 @@ graph LR
 ## 3. Ubiquitous Language
 
 - **Interaction event**: atomic user action — impression, click, dwell, like/save, share. The unit of ingestion.
-- **Item / content item**: the thing recommended (article/video/product); catalog lives in MongoDB.
+- **Content item**: the canonical article/video/product document owned by MongoDB; its stable ID is carried as `item_id` in interaction events. Avoid calling the document an interaction or event.
 - **Candidate retrieval**: narrowing the full catalog (~10⁴–10⁶) to hundreds of plausible items for one request.
 - **Ranking**: scoring retrieved candidates by predicted relevance (CTR/consumption probability).
 - **Feature vector**: the joined user × item × context features fed to ranking.
@@ -78,7 +81,7 @@ Facts, not aspirations.
 
 **Reserved with binding decisions**: full pipeline shape above; language ownership per [ADR 0004](./docs/adr/0004-polyglot-language-per-concern.md); SvelteKit over Next.js per [ADR 0005](./docs/adr/0005-sveltekit-over-nextjs.md); RAM-profiled local infra per [ADR 0003](./docs/adr/0003-ram-budgeted-local-infrastructure.md); k3s + Helm adoption per [ADR 0007](./docs/adr/0007-kubernetes-adoption-k3s-helm.md).
 
-**Not built**: training, serving, app layer, observability, analytics, and the MongoDB content-catalog seam. Current phase state in [`.worklog/FOCUS.md`](./.worklog/FOCUS.md) (local-only).
+**Not built**: training, serving, app layer, observability, and analytics. Current phase state in [`.worklog/FOCUS.md`](./.worklog/FOCUS.md) (local-only).
 
 ## 5. Engineering Contexts
 
@@ -88,6 +91,6 @@ Facts, not aspirations.
 | [`.worklog/FOCUS.md`](./.worklog/FOCUS.md) | root (local-only) | Current phase, active threads, handoff notes. |
 | `.agents/rules/` | mapped in AGENTS.md §1 | Operational rules with frontmatter (`globs`, `alwaysApply`). |
 | `.agents/skills/` | mapped in AGENTS.md §1 | Phase workflows: study, operate. |
-| `docs/adr/` | [`docs/README.md`](./docs/README.md) hub | Binding decisions with alternatives. |
+| `docs/adr/` | [`docs/AGENTS.md`](./docs/AGENTS.md) hub | Binding decisions with alternatives. |
 | `docs/agents/` | `knowledge/` + `runbooks/` + `experiments/` + section map + generated `index.json` | Agent-facing docs: transferable knowledge, executable procedures, experiment records. |
 | `.notes/00-roadmap.md` | roadmap | Phase plan and stack map (local-only). |

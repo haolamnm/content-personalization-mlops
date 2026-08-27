@@ -20,7 +20,7 @@ This page answers one question: which architecture page should I read before pro
 | Service or context | Role | Status | Detail |
 |:---|:---|:---|:---|
 | PostgreSQL | Transactional source and Iceberg JDBC catalog | Implemented slice | [Data platform](./data-platform.md) |
-| MongoDB | Content catalog source | Implemented/target source | [Data platform](./data-platform.md) |
+| MongoDB | Content catalog source | Implemented slice; single-node replica set for CDC | [Data platform](./data-platform.md) |
 | Debezium / Kafka Connect | Database-change capture | Implemented slice | [Data platform](./data-platform.md) |
 | Kafka | Replayable event backbone | Implemented slice | [Messaging](./messaging.md) |
 | Go event gateway | Interaction ingestion | Implemented slice | [System flow](./system-flow.md) |

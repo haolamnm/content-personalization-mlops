@@ -103,7 +103,7 @@ public final class EventsLakeJob {
         // in LocalStreamEnvironment; revisit with the deployment-shape ADR.
         config.set(CoreOptions.DEFAULT_PARALLELISM, Integer.getInteger("flink.parallelism", 1));
         // separate dir from event-counts so both jobs can run concurrently on one box;
-        // override with a durable shared URI for restore-capable deployments (README)
+        // override with a durable shared URI for restore-capable deployments (AGENTS.md)
         config.set(CheckpointingOptions.CHECKPOINT_STORAGE, "filesystem");
         config.set(
                 CheckpointingOptions.CHECKPOINTS_DIRECTORY,

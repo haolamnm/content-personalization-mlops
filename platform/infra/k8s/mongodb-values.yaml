@@ -1,5 +1,7 @@
-architecture: standalone
-useStatefulSet: true
+architecture: replicaset
+replicaCount: 1
+arbiter:
+  enabled: false
 auth:
   enabled: true
   rootUser: mlops

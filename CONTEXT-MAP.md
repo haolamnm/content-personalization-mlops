@@ -19,6 +19,8 @@ graph LR
   BFF --> RT[Retrieval/Rank · Rust]
   RT --> OS[(Online Store · Redis)]
   PG[(PostgreSQL)] -- Debezium CDC --> K
+  CAT[Content Catalog · Go] --> MDB[(MongoDB)]
+  MDB -- Debezium CDC --> K
   K --> ST[Stream Jobs · Flink/KStreams]
   ST --> LH[(Lakehouse · MinIO + Iceberg)]
   K -- sink --> ES[(Elasticsearch)]

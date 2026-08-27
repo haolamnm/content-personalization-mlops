@@ -11,16 +11,16 @@ make catalog-test
 make catalog-lint
 ```
 
-The deterministic seed command writes the embedded fixture through the repository boundary. Set `MONGODB_URI`, `MONGODB_DATABASE`, and `MONGODB_COLLECTION` to target a local or k3s MongoDB instance:
+The deterministic seed command writes the embedded fixture through the repository boundary. Set `MONGODB_URI` in the caller environment with `replicaSet=rs0` and any required credentials, plus `MONGODB_DATABASE` and `MONGODB_COLLECTION`, to target a k3s MongoDB instance:
 
 ```bash
-MONGODB_URI='mongodb://mlops:password@localhost:27017/?authSource=admin' MONGODB_DATABASE=mlops_catalog MONGODB_COLLECTION=content_items go -C platform/services/content-catalog run ./cmd/catalog-seed
+MONGODB_URI="${MONGODB_URI:?set MONGODB_URI with replicaSet=rs0}" MONGODB_DATABASE=mlops_catalog MONGODB_COLLECTION=content_items go -C platform/services/content-catalog run ./cmd/catalog-seed
 ```
 
 The integration read proof is opt-in and skips without a URI:
 
 ```bash
-MONGODB_URI='mongodb://mlops:password@localhost:27017/?authSource=admin&replicaSet=rs0' go -C platform/services/content-catalog test -tags integration ./internal/catalog
+MONGODB_URI="${MONGODB_URI:?set MONGODB_URI with replicaSet=rs0}" go -C platform/services/content-catalog test -tags integration ./internal/catalog
 ```
 
 ## Boundary

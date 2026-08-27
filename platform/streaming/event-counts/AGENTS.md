@@ -32,13 +32,14 @@ docker run --rm -v "$PWD:/workspace" -w /workspace \
   maven:3.9-eclipse-temurin-25 mvn -q package
 
 # embedded run (LocalStreamEnvironment) against the mesh from inside the data network:
-# image pinned at adoption: eclipse-temurin:25-jre, digest sha256:f9e65324a37f2 verified
+# image pinned at adoption: eclipse-temurin:25-jre,
+# digest sha256:f9e65324a37f28209ce7dd0e5149a7aa954520ed936fb87813cf6ded2400a112 verified
 docker run -d --name flink-event-counts --network mlops-data \
   -e KAFKA_BOOTSTRAP_SERVERS=kafka:9092 \
   -v "$PWD/target/event-counts.jar:/app/event-counts.jar" \
   --health-cmd "find /tmp/flink-checkpoints -mmin -2 | grep -q chk" \
   --health-interval=15s --health-timeout=5s --health-start-period=45s \
-  eclipse-temurin:25-jre java --add-opens=java.base/java.lang=ALL-UNNAMED \
+  eclipse-temurin:25-jre@sha256:f9e65324a37f28209ce7dd0e5149a7aa954520ed936fb87813cf6ded2400a112 java --add-opens=java.base/java.lang=ALL-UNNAMED \
     --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED \
     --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED \
     --add-opens=java.base/sun.nio.ch=ALL-UNNAMED -jar /app/event-counts.jar

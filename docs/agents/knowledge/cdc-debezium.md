@@ -17,7 +17,7 @@ related:
 - Postgres side: `wal_level=logical` in the data group; publication + slot created by an **idempotent PUT registration** against the Connect REST API — reruns converge instead of duplicating connectors.
 - Connect config is **flat** (no nested spec object): keys like `"name"`, `"database.hostname"` sit alongside `"connector.class"`. The API rejects the nested shape silently-looking but loudly.
 - The standing THINKBOOK connectors run as Strimzi `KafkaConnector` resources in `mlops-data`; passwords are resolved through the Kubernetes Secret ConfigProvider. PostgreSQL uses its replication role, while MongoDB uses the `mongodb-auth` root credential for this learning runtime. Compose remains the MACBOOK fallback.
-- Envelope lands on `<schema>.<table>` topic (`public.interactions`); insert proven end-to-end on THINKBOOK.
+- Envelope lands on `mlops.public.interactions`; insert proven end-to-end on THINKBOOK.
 - MongoDB runs as the single-node `rs0` replica set required by change streams. Content catalog writes from `mlops_catalog.content_items` land on `mlops_mongodb.mlops_catalog.content_items`; insert proven end-to-end on THINKBOOK.
 
 ## Pins & quirks

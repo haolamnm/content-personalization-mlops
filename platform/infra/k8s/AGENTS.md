@@ -43,7 +43,7 @@ The PostgreSQL and MongoDB connector passwords are resolved at runtime by Strimz
 ## Final cutover gate
 
 ```bash
-kubectl get kafka mlops-kafka kafkaconnect mlops-connect kafkaconnector postgres-source mongodb-source -n mlops-data
+kubectl get kafka/mlops-kafka kafkaconnect/mlops-connect kafkaconnector/postgres-source kafkaconnector/mongodb-source -n mlops-data
 kubectl get cluster mlops-postgres -n mlops-data
 kubectl get pods -A
 docker ps -a --format '{{.Names}}' | rg '^(cdc-connect|data-)'

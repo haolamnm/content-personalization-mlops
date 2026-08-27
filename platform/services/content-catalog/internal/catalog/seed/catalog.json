@@ -1,0 +1,38 @@
+[
+  {
+    "id": "article-001",
+    "kind": "article",
+    "title": "Building reliable feature pipelines",
+    "description": "A practical guide to reproducible interaction features.",
+    "categories": ["engineering", "mlops"],
+    "tags": ["features", "iceberg", "feast"],
+    "status": "active",
+    "published_at": "2026-01-01T00:00:00Z",
+    "created_at": "2025-12-20T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "video-001",
+    "kind": "video",
+    "title": "Kafka event time from first principles",
+    "description": "A short walkthrough of event time and late arrivals.",
+    "categories": ["streaming"],
+    "tags": ["kafka", "flink"],
+    "status": "active",
+    "published_at": "2026-01-02T00:00:00Z",
+    "created_at": "2025-12-21T00:00:00Z",
+    "updated_at": "2026-01-02T00:00:00Z"
+  },
+  {
+    "id": "article-002",
+    "kind": "article",
+    "title": "Archived catalog example",
+    "description": "A retained document that must not be returned as active.",
+    "categories": ["engineering"],
+    "tags": ["archive"],
+    "status": "archived",
+    "published_at": "2025-11-01T00:00:00Z",
+    "created_at": "2025-10-20T00:00:00Z",
+    "updated_at": "2026-01-03T00:00:00Z"
+  }
+]

@@ -6,7 +6,7 @@ type: guide
 status: active
 tags: [experiments]
 related:
-  - ../README.md
+  - ../AGENTS.md
 ---
 
 # `docs/agents/experiments/`

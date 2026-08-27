@@ -4,7 +4,7 @@
   "count": 32,
   "docs": [
     {
-      "path": "docs/README.md",
+      "path": "docs/AGENTS.md",
       "id": "docs-hub",
       "title": "MLOps Zero→Hero Docs — Hub",
       "type": "index",
@@ -168,7 +168,7 @@
       ]
     },
     {
-      "path": "docs/agents/README.md",
+      "path": "docs/agents/AGENTS.md",
       "id": "agents-docs-map",
       "title": "Agents Docs Map",
       "type": "guide",
@@ -179,11 +179,11 @@
         "layout"
       ],
       "related": [
-        "../README.md"
+        "../AGENTS.md"
       ]
     },
     {
-      "path": "docs/agents/architecture/README.md",
+      "path": "docs/agents/architecture/AGENTS.md",
       "id": "agents-architecture-map",
       "title": "Architecture Design Index",
       "type": "guide",
@@ -194,7 +194,7 @@
         "design"
       ],
       "related": [
-        "../README.md",
+        "../AGENTS.md",
         "./index.json",
         "./north-star.md"
       ]
@@ -397,7 +397,7 @@
       ]
     },
     {
-      "path": "docs/agents/experiments/README.md",
+      "path": "docs/agents/experiments/AGENTS.md",
       "id": "agents-experiments-map",
       "title": "Experiments",
       "type": "guide",
@@ -407,7 +407,7 @@
         "experiments"
       ],
       "related": [
-        "../README.md"
+        "../AGENTS.md"
       ]
     },
     {
@@ -462,8 +462,8 @@
       ],
       "related": [
         "../knowledge/image-pins.md",
-        "../../../platform/streaming/event-counts/README.md",
-        "../../../platform/streaming/events-lake/README.md",
+        "../../../platform/streaming/event-counts/AGENTS.md",
+        "../../../platform/streaming/events-lake/AGENTS.md",
         "../../adr/0008-iceberg-lake-sink-dual-pin.md",
         "../../../.agents/rules/java-streaming-correctness.md"
       ]

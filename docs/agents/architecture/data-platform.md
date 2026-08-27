@@ -18,7 +18,7 @@ This page answers one question: how does source data become governed, replayable
 
 ## Source and capture plane
 
-PostgreSQL owns transactional users and interaction state. MongoDB owns document-shaped content metadata. Debezium and Kafka Connect publish database changes to Kafka topics.
+PostgreSQL owns transactional users and interaction state. MongoDB owns document-shaped content metadata through the Content Catalog boundary. Debezium and Kafka Connect publish PostgreSQL and MongoDB changes to Kafka topics; MongoDB runs as a single-node replica set on the k3s learning runtime because change streams require a replica set.
 
 The app event path and CDC path are separate contracts. An interaction event says what the user did; a CDC record says what changed in a database.
 
